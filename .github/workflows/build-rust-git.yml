@@ -1,0 +1,121 @@
+name: git-rust-build-windows
+
+on:
+  workflow_dispatch:
+    inputs:
+      git_repo:
+        description: 'Repo'
+        required: true
+        default: 'darwis059/nu_plugin_ldap'
+      exe_name:
+        description: 'Executable filename'
+        required: true
+        default: 'nu_plugin_ldap'
+      ref:
+        description: 'Branch Name'
+        required: true
+        default: 'main'
+      nu_plugin_ver:
+        description: 'Nu Plugin Version'
+        required: true
+        default: '0.96.0'
+      patch:
+        description: 'Patch Cargo.toml'
+        required: true
+        default: 'true'
+
+run-name: Build Git Rust ${{ github.event.inputs.git_repo }}
+jobs:
+  build:
+    runs-on: 'windows-latest'
+    steps:
+      - name: 'checkout patch.nu'
+        uses: actions/checkout@v4.1.2
+        with:
+          sparse-checkout: |
+            patch.nu
+          sparse-checkout-cone-mode: false
+      - name: 'move new file'
+        run: cp patch.nu ../
+      # - name: 'checkout nushel'
+      #   uses: actions/checkout@v4
+      #   with:
+      #     repository: nushell/nushell
+      #     path: 'nushell'
+      # - name: 'move nushell folder'
+      #   run: mv nushell ../
+      - name: 'checkout repo'
+        uses: actions/checkout@v4
+        with:
+          repository: '${{ github.event.inputs.git_repo }}'
+          ref: '${{ github.event.inputs.ref }}'
+
+      - name: 'move back patch'
+        run: |
+          cp ../patch.nu ./
+          cat patch.nu
+
+      # - name: 'patch cargo'
+      #   if: ${{ github.event.inputs.patch == 'true' }}
+      #   run: |
+      #     sed -i 's/nu-protocol.*/nu-protocol = \{ version = \"${{ github.event.inputs.nu_plugin_ver }}\", features = \[\"plugin\"\] \}/' Cargo.toml
+      #     sed -i 's/nu-plugin.*/nu-plugin = \"${{ github.event.inputs.nu_plugin_ver }}\"/' Cargo.toml
+      #     sed -i 's/nuon.*/nuon = \"${{ github.event.inputs.nu_plugin_ver }}\"/' Cargo.toml
+      #     sed -i 's/nu-path.*/nu-path = \"${{ github.event.inputs.nu_plugin_ver }}\"/' Cargo.toml
+
+      - name: Setup Rust toolchain and cache
+        uses: actions-rust-lang/setup-rust-toolchain@v1.9.0
+        with:
+          rustflags: ''
+
+      - name: Setup Nushell
+        uses: hustcer/setup-nu@v3.12
+        with:
+          version: 0.95.0
+
+      # - name: Setup tmate session
+      #   uses: mxschmitt/action-tmate@v3
+
+      - name: Run Patch
+        id: nu
+        run: |
+          echo "REPOSITORY=${{ github.event.inputs.git_repo }}" | Out-File -FilePath $env:GITHUB_ENV -Append
+          nu patch.nu ${{ github.event.inputs.git_repo }} ${{ github.event.inputs.nu_plugin_ver }} ${{ github.event.inputs.patch }}
+        env:
+          REPOSITORY: ${{ github.event.inputs.git_repo }}
+          PLUGIN_VER: ${{ github.event.inputs.nu_plugin_ver }}
+          DO_PATCH: ${{ github.event.inputs.patch }}
+
+      - name: 'Build (Release mode)'
+        shell: cmd
+        run: |
+          PATH C:\Strawberry\perl\bin;%PATH%
+          cargo build --release --all --target x86_64-pc-windows-msvc
+          ls target/x86_64-pc-windows-msvc/release/
+
+      # # - name: Setup tmate session
+      # #   uses: mxschmitt/action-tmate@v3
+      - name: Setup Rclone
+        uses: AnimMouse/setup-rclone@v1
+        with:
+          rclone_config: ${{ secrets.RCLONE_CONFIG }}
+
+      - run: rclone copy "target/x86_64-pc-windows-msvc/release/${{ github.event.inputs.exe_name }}.exe" drop:darwis/rust-build
+
+      - name: Telegram Notify http request
+        uses: fjogeleit/http-request-action@v1
+        with:
+          url: https://api.telegram.org/bot${{ secrets.TELEGRAM_TOKEN }}/sendMessage
+          method: 'POST'
+          customHeaders: '{"Content-Type": "application/json"}'
+          data: '{"chat_id": ${{ secrets.TELEGRAM_TO }}, "text": "Build Complete ${{github.event.inputs.exe_name}}"}'
+          # to: ${{ secrets.TELEGRAM_TO }}
+          # token: ${{ secrets.TELEGRAM_TOKEN }}
+          # message: Build Complete ${{github.event.inputs.exe_name}}
+          #
+      # - name: Upload binary
+      #   uses: actions/upload-artifact@v2.3.1
+      #   with:
+      #     name: ${{ github.event.inputs.exe_name }}
+      #     path: target/x86_64-pc-windows-msvc/release/${{ github.event.inputs.exe_name }}.exe
+      #     retention-days: 3
