@@ -82,6 +82,9 @@ def main [repository: string plugin_ver: string do_patch: bool] {
             # $codes | update 110 'val: UntaggedValue::Primitive(Primitive::Int(process.id() as i64)),' | str join (char nl) | save -f src/main.rs
         }
     }
+    if $repository == 'FMotalleb/nu_plugin_image' {
+        open Cargo.toml | upsert patch.crates-io { windows-sys: { version: '0.61.2' }, dirs-sys: { git: 'https://github.com/dirs-dev/dirs-sys-rs', rev: 'main' } } | save -f Cargo.toml
+    }
 }
 
 def patch-desc [file] {
