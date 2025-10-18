@@ -84,19 +84,20 @@ def main [repository: string plugin_ver: string do_patch: bool] {
     }
     if $repository == 'FMotalleb/nu_plugin_image' {
         # open Cargo.toml | upsert patch.crates-io { windows-sys: '0.61.2' } | save -f Cargo.toml
-        # open Cargo.toml | upsert dependencies.windows-sys '0.60.2' | save -f Cargo.toml
-        open Cargo.toml | 
-            upsert dependencies.crossterm '0.28.1' | 
-            upsert dependencies.ab_glyph '0.2.31' | 
-            upsert dependencies.slog-term '2.9.2' | 
-            upsert dependencies.clap.version '4.5.45' |
-            save -f Cargo.toml
+        open Cargo.toml | upsert dependencies.windows-sys '0.61.2' | save -f Cargo.toml
+        cargo update
+        # open Cargo.toml | 
+        #     upsert dependencies.crossterm '0.28.1' | 
+        #     upsert dependencies.ab_glyph '0.2.31' | 
+        #     upsert dependencies.slog-term '2.9.2' | 
+        #     upsert dependencies.clap.version '4.5.45' |
+        #     save -f Cargo.toml
     }
     if $repository == 'mrxiaozhuox/nu_plugin_sled' {
         open Cargo.toml | upsert dependencies.windows-sys '0.61.2' | save -f Cargo.toml
         cargo update
-        let codes = open src/commands/open.rs | lines
-        $codes | update 19 "     fn examples(&self) -> Vec<nu_protocol::Example<'_>> {" | save -f src/commands/open.rs
+        open src/commands/open.rs | lines | update 19 "     fn examples(&self) -> Vec<nu_protocol::Example<'_>> {" | str join (char nl) | save -f src/commands/open.rs
+        open src/command/save.rs | lines | update 19 "     fn examples(&self) -> Vec<nu_protocol::Example<'_>> {" | str join (char nl) | save -f src/command/save.rs
     }
 }
 
