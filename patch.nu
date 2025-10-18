@@ -88,6 +88,8 @@ def main [repository: string plugin_ver: string do_patch: bool] {
 
         cargo update
         open src/logging/logger.rs | lines | update 0 'use lazy_static::lazy_static;' | str join (char nl) | save -f src/logging/logger.rs
+        open src/ansi_to_image/nu_plugin.rs | lines | update 23 '         , .. } => val.as_bytes(),' | update 27 '         , .. } => val,' | str join (char nl) | save -f src/ansi_to_image/nu_plugin.rs
+
         # open Cargo.toml | 
         #     upsert dependencies.crossterm '0.28.1' | 
         #     upsert dependencies.ab_glyph '0.2.31' | 
