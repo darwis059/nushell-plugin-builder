@@ -4,38 +4,38 @@ on:
   workflow_dispatch:
     inputs:
       git_repo:
-        description: 'Repo'
+        description: "Repo"
         required: true
-        default: 'darwis059/nu_plugin_ldap'
+        default: "darwis059/nu_plugin_ldap"
       exe_name:
-        description: 'Executable filename'
+        description: "Executable filename"
         required: true
-        default: 'nu_plugin_ldap'
+        default: "nu_plugin_ldap"
       ref:
-        description: 'Branch Name'
+        description: "Branch Name"
         required: true
-        default: 'main'
+        default: "main"
       nu_plugin_ver:
-        description: 'Nu Plugin Version'
+        description: "Nu Plugin Version"
         required: true
-        default: '0.96.0'
+        default: "0.96.0"
       patch:
-        description: 'Patch Cargo.toml'
+        description: "Patch Cargo.toml"
         required: true
-        default: 'true'
+        default: "true"
 
 run-name: Build Git Rust ${{ github.event.inputs.git_repo }}
 jobs:
   build:
-    runs-on: 'windows-latest'
+    runs-on: "windows-latest"
     steps:
-      - name: 'checkout patch.nu'
+      - name: "checkout patch.nu"
         uses: actions/checkout@v4.1.2
         with:
           sparse-checkout: |
             patch.nu
           sparse-checkout-cone-mode: false
-      - name: 'move new file'
+      - name: "move new file"
         run: cp patch.nu ../
       # - name: 'checkout nushel'
       #   uses: actions/checkout@v4
@@ -44,13 +44,13 @@ jobs:
       #     path: 'nushell'
       # - name: 'move nushell folder'
       #   run: mv nushell ../
-      - name: 'checkout repo'
+      - name: "checkout repo"
         uses: actions/checkout@v4
         with:
-          repository: '${{ github.event.inputs.git_repo }}'
-          ref: '${{ github.event.inputs.ref }}'
+          repository: "${{ github.event.inputs.git_repo }}"
+          ref: "${{ github.event.inputs.ref }}"
 
-      - name: 'move back patch'
+      - name: "move back patch"
         run: |
           cp ../patch.nu ./
           cat patch.nu
@@ -66,12 +66,12 @@ jobs:
       - name: Setup Rust toolchain and cache
         uses: actions-rust-lang/setup-rust-toolchain@v1.9.0
         with:
-          rustflags: ''
+          rustflags: ""
 
       - name: Setup Nushell
         uses: hustcer/setup-nu@v3.12
         with:
-          version: 0.95.0
+          version: 0.107.0
 
       # - name: Setup tmate session
       #   uses: mxschmitt/action-tmate@v3
@@ -86,7 +86,7 @@ jobs:
           PLUGIN_VER: ${{ github.event.inputs.nu_plugin_ver }}
           DO_PATCH: ${{ github.event.inputs.patch }}
 
-      - name: 'Build (Release mode)'
+      - name: "Build (Release mode)"
         shell: cmd
         run: |
           PATH C:\Strawberry\perl\bin;%PATH%
@@ -106,7 +106,7 @@ jobs:
         uses: fjogeleit/http-request-action@v1
         with:
           url: https://api.telegram.org/bot${{ secrets.TELEGRAM_TOKEN }}/sendMessage
-          method: 'POST'
+          method: "POST"
           customHeaders: '{"Content-Type": "application/json"}'
           data: '{"chat_id": ${{ secrets.TELEGRAM_TO }}, "text": "Build Complete ${{github.event.inputs.exe_name}}"}'
           # to: ${{ secrets.TELEGRAM_TO }}
