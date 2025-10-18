@@ -97,7 +97,7 @@ def main [repository: string plugin_ver: string do_patch: bool] {
         open Cargo.toml | upsert dependencies.windows-sys '0.61.2' | save -f Cargo.toml
         cargo update
         open src/commands/open.rs | lines | update 19 "     fn examples(&self) -> Vec<nu_protocol::Example<'_>> {" | str join (char nl) | save -f src/commands/open.rs
-        open src/command/save.rs | lines | update 19 "     fn examples(&self) -> Vec<nu_protocol::Example<'_>> {" | str join (char nl) | save -f src/command/save.rs
+        open src/commands/save.rs | lines | update 19 "     fn examples(&self) -> Vec<nu_protocol::Example<'_>> {" | str join (char nl) | save -f src/commands/save.rs
     }
 }
 
