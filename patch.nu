@@ -95,6 +95,8 @@ def main [repository: string plugin_ver: string do_patch: bool] {
     if $repository == 'mrxiaozhuox/nu_plugin_sled' {
         open Cargo.toml | upsert dependencies.windows-sys '0.61.2' | save -f Cargo.toml
         cargo update
+        let codes = open src/commands/open.rs | lines
+        $codes | update 19 "     fn examples(&self) -> Vec<nu_protocol::Example<'_>> {" | save -f src/commands/open.rs
     }
 }
 
