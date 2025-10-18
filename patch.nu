@@ -83,7 +83,8 @@ def main [repository: string plugin_ver: string do_patch: bool] {
         }
     }
     if $repository == 'FMotalleb/nu_plugin_image' {
-        open Cargo.toml | upsert patch.crates-io { windows-sys: '0.61.2' } | save -f Cargo.toml
+        # open Cargo.toml | upsert patch.crates-io { windows-sys: '0.61.2' } | save -f Cargo.toml
+        open Cargo.toml | upsert dependencies.windows-sys '0.61.2' | save -f Cargo.toml
     }
 }
 
