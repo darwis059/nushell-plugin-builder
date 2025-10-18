@@ -20,7 +20,7 @@ def main [repository: string plugin_ver: string do_patch: bool] {
             update dependencies.nu-protocol { version: $plugin_ver features: ['plugin'] } | 
             if 'nuon' in ($in | get dependencies) { $in | update dependencies.nuon $plugin_ver } else { $in } | 
             if 'nu-path' in ($in | get dependencies) { $in | update dependencies.nu-path $plugin_ver } else { $in } | 
-            if 'nu-plugin-test-support' in ($in | get -i dev-dependencies | default {}) { $in | update dev-dependencies.nu-plugin-test-support $plugin_ver } else { $in } | 
+            if 'nu-plugin-test-support' in ($in | get -o dev-dependencies | default {}) { $in | update dev-dependencies.nu-plugin-test-support $plugin_ver } else { $in } | 
             if 'nu-cmd-base' in ($in | get dependencies) { $in | update dependencies.nu-cmd-base $plugin_ver } else { $in } | 
             save -f Cargo.toml
         # open Cargo.toml | print
@@ -78,7 +78,8 @@ def main [repository: string plugin_ver: string do_patch: bool] {
     if $repository == 'fdncred/nu_plugin_bg' {
         let codes = open src/main.rs | lines
         if (($codes | slice 109..112 | str join '' | str replace --regex --all '\s*' '') == 'Ok(Value::Int{val:process.id()asi64,internal_span:value_span,})') {
-            $codes | update 110 '' | update 111 '' | update 112 '' | update 109 '        Ok(Value::Int(process.id() as i64, value_span))' | str join (char nl) | save -f src/main.rs
+            # $codes | update 110 '' | update 111 '' | update 112 '' | update 109 '        Ok(Value::Int(process.id() as i64, value_span))' | str join (char nl) | save -f src/main.rs
+            $codes | update 110 'val: UntaggedValue::Primitive(Primitive::Int(process.id() as i64)),' | str join (char nl) | save -f src/main.rs
         }
     }
 }

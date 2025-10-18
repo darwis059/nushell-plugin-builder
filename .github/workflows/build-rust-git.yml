@@ -18,7 +18,7 @@ on:
       nu_plugin_ver:
         description: "Nu Plugin Version"
         required: true
-        default: "0.96.0"
+        default: "0.108.0"
       patch:
         description: "Patch Cargo.toml"
         required: true
@@ -30,7 +30,7 @@ jobs:
     runs-on: "windows-latest"
     steps:
       - name: "checkout patch.nu"
-        uses: actions/checkout@v4.1.2
+        uses: actions/checkout@v5
         with:
           sparse-checkout: |
             patch.nu
@@ -45,7 +45,7 @@ jobs:
       # - name: 'move nushell folder'
       #   run: mv nushell ../
       - name: "checkout repo"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: "${{ github.event.inputs.git_repo }}"
           ref: "${{ github.event.inputs.ref }}"
@@ -64,12 +64,12 @@ jobs:
       #     sed -i 's/nu-path.*/nu-path = \"${{ github.event.inputs.nu_plugin_ver }}\"/' Cargo.toml
 
       - name: Setup Rust toolchain and cache
-        uses: actions-rust-lang/setup-rust-toolchain@v1.9.0
+        uses: actions-rust-lang/setup-rust-toolchain@v1.15.2
         with:
           rustflags: ""
 
       - name: Setup Nushell
-        uses: hustcer/setup-nu@v3.12
+        uses: hustcer/setup-nu@v3.20
         with:
           version: 0.107.0
 
@@ -103,7 +103,7 @@ jobs:
       - run: rclone copy "target/x86_64-pc-windows-msvc/release/${{ github.event.inputs.exe_name }}.exe" drop:darwis/rust-build
 
       - name: Telegram Notify http request
-        uses: fjogeleit/http-request-action@v1
+        uses: fjogeleit/http-request-action@v1.16.5
         with:
           url: https://api.telegram.org/bot${{ secrets.TELEGRAM_TOKEN }}/sendMessage
           method: "POST"
