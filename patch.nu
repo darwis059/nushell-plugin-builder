@@ -1,6 +1,6 @@
 #!/usr/bin/env nu
 
-print ($env | get -i REPOSITORY)
+print ($env | get -o REPOSITORY)
 def main [repository: string plugin_ver: string do_patch: bool] {
     # let plugin_ver = $env.PLUGIN_VER
     let src = $env.GITHUB_WORKSPACE
