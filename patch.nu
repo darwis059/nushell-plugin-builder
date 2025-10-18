@@ -85,7 +85,8 @@ def main [repository: string plugin_ver: string do_patch: bool] {
     if $repository == 'FMotalleb/nu_plugin_image' {
         # open Cargo.toml | upsert patch.crates-io { windows-sys: '0.61.2' } | save -f Cargo.toml
         open Cargo.toml | upsert dependencies.windows-sys '0.61.2' | save -f Cargo.toml
-        cargo update
+        http get https://raw.githubusercontent.com/FMotalleb/nushell_sync_script/refs/heads/main/bump_dependencies.nu | save /tmp/update.nu
+        nu /tmp/update.nu
         # open Cargo.toml | 
         #     upsert dependencies.crossterm '0.28.1' | 
         #     upsert dependencies.ab_glyph '0.2.31' | 
