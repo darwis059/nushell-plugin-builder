@@ -83,7 +83,7 @@ def main [repository: string plugin_ver: string do_patch: bool] {
         }
     }
     if $repository == 'FMotalleb/nu_plugin_image' {
-        open Cargo.toml | upsert patch.crates-io { windows-sys: { version: '0.61.2' }, dirs-sys: { git: 'https://codeberg.org/dirs/dirs-sys-rs.git', branch: 'main' } } | save -f Cargo.toml
+        open Cargo.toml | upsert patch.crates-io { windows-sys: 'v0.61.2' } | save -f Cargo.toml
     }
 }
 
