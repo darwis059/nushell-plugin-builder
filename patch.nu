@@ -92,6 +92,9 @@ def main [repository: string plugin_ver: string do_patch: bool] {
             upsert dependencies.clap.version '4.5.45' |
             save -f Cargo.toml
     }
+    if $repository == 'mrxiaozhuox/nu_plugin_sled' {
+        open Cargo.toml | upsert dependencies.windows-sys '0.61.2' | save -f Cargo.toml
+    }
 }
 
 def patch-desc [file] {
