@@ -83,6 +83,21 @@ def main [repository: string plugin_ver: string do_patch: bool] {
         open Cargo.toml | upsert dependencies.windows-sys '0.61.2' | save -f Cargo.toml
         cargo update
     }
+    if $repository == 'Elsie19/nu_plugin_nutext' {
+        open src/commands/register.rs | lines | 
+            update 46 "                Value::record(" |
+            update 47 "                    record! {" |
+            update 52 "                    Span::unknown()," |
+            update 53 "                )," |
+            str join (char nl) | save -f src/commands/register.rs
+
+        open src\commands\stringret.rs | lines |
+            update 127 "        Ok(Value::string(" |
+            update 128 "            parsed_vars," |
+            update 129 "            call.head," |
+            update 130 "        ))" |
+            str join (char nl) | save -f src/commands/stringret.rs
+    }
 }
 
 def patch-desc [file] {
