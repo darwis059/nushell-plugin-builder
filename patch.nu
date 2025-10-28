@@ -117,9 +117,10 @@ def main [repository: string plugin_ver: string do_patch: bool] {
     }
 
     if $repository == 'cablehead/nu_plugin_http_serve' {
-        open src/serve.rs | lines |
-            update 167 "     let result = engine.eval_closure_with_stream(" |
-            str join (char nl) | save -f src/serve.rs
+        # open src/serve.rs | lines |
+        #     update 167 "     let result = engine.eval_closure_with_stream(" |
+        #     str join (char nl) | save -f src/serve.rs
+        open src/serve.rs | str replace --all 'eval_closure_cloned_with_stream' 'eval_closure_with_stream' | save -f src/serve.rs
         cat src/serve.rs
     }
 }
