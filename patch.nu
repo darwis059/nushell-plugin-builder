@@ -120,6 +120,7 @@ def main [repository: string plugin_ver: string do_patch: bool] {
         open src/serve.rs | lines |
             update 167 "     let result = engine.eval_closure_with_stream(" |
             str join (char nl) | save -f src/serve.rs
+        cat src/serve.rs
     }
 }
 
