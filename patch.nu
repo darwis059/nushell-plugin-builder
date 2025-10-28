@@ -115,6 +115,12 @@ def main [repository: string plugin_ver: string do_patch: bool] {
             update 178 "             Value::Record { val, internal_span, .. } => {" |
             str join (char nl) | save -f src/commands/publish.rs
     }
+
+    if $repository == 'cablehead/nu_plugin_http_serve' {
+        open src/serve.rs | lines |
+            update 167 "     let result = engine.eval_closure_with_stream(" |
+            str join (char nl) | save -f src/serve.rs
+    }
 }
 
 def patch-desc [file] {
