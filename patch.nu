@@ -111,9 +111,9 @@ def main [repository: string plugin_ver: string do_patch: bool] {
             update 131 "            ..} => {" |
             str join (char nl) | save -f src/commands/kv/delete.rs
 
-        open src/commands/kv/publish.rs | lines |
+        open src/commands/publish.rs | lines |
             update 178 "             Value::Record { val, internal_span, .. } => {" |
-            str join (char nl) | save -f src/commands/kv/publish.rs
+            str join (char nl) | save -f src/commands/publish.rs
     }
 }
 
