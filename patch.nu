@@ -123,6 +123,11 @@ def main [repository: string plugin_ver: string do_patch: bool] {
         open src/serve.rs | str replace --all 'eval_closure_cloned_with_stream' 'eval_closure_with_stream' | save -f src/serve.rs
         cat src/serve.rs
     }
+
+    if $repository == 'kik4444/nu_plugin_mime' {
+        open Cargo.toml | upsert dependencies.windows-sys '0.61.2' | upsert dependencies.nu-utils '0.108.0' | save -f Cargo.toml
+        cargo update
+    }
 }
 
 def patch-desc [file] {
