@@ -147,6 +147,11 @@ def main [repository: string plugin_ver: string do_patch: bool] {
     #    open Cargo.toml | upsert dependencies.windows-sys '0.61.2' | upsert dependencies.nu-utils '0.109.0' | save -f Cargo.toml
     #    cargo update
     #}
+    if $repository == 'cristianbdg/nu_plugin_cer' {
+        open src\command.rs | lines |
+            update 18 "     fn description(&self) -> &str {" |
+            str join (char nl) | save -f src\command.rs
+    }
 }
 
 def patch-desc [file] {
