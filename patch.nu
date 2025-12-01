@@ -113,7 +113,7 @@ def main [repository: string plugin_ver: string do_patch: bool] {
             str join (char nl) | save -f src/commands/stringret.rs
     }
     if $repository == 'dam4rus/nu_plugin_nuts' {
-        open Cargo.toml | upsert dependencies.windows-sys '0.61.2' | upsert dependencies.nu-utils '0.108.0' | save -f Cargo.toml
+        open Cargo.toml | upsert dependencies.windows-sys '0.61.2' | upsert dependencies.nu-utils '0.109.0' | save -f Cargo.toml
         cargo update
 
         open src/commands/kv/delete.rs | lines |
@@ -135,7 +135,7 @@ def main [repository: string plugin_ver: string do_patch: bool] {
     }
 
     #if $repository == 'kik4444/nu_plugin_mime' {
-    #    open Cargo.toml | upsert dependencies.windows-sys '0.61.2' | upsert dependencies.nu-utils '0.108.0' | save -f Cargo.toml
+    #    open Cargo.toml | upsert dependencies.windows-sys '0.61.2' | upsert dependencies.nu-utils '0.109.0' | save -f Cargo.toml
     #    cargo update
     #}
 }
