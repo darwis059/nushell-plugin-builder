@@ -154,7 +154,12 @@ def main [repository: string plugin_ver: string do_patch: bool] {
     if $repository == 'nushell-works/nu_plugin_nw_ulid' {
         open Cargo.toml | upsert dependencies.windows-sys '0.61.2' | save -f Cargo.toml
         cargo update
+    }    
+    if $repository == 'eggcaker/nu_plugin_to_xlsx' {
+        open Cargo.toml | upsert dependencies.windows-sys '0.61.2' | save -f Cargo.toml
+        cargo update
     }
+    
     if $repository == 'cristianbdg/nu_plugin_cer' {
         open src\command.rs | lines |
             update 18 "     fn description(&self) -> &str {" |
