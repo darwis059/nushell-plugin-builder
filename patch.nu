@@ -49,7 +49,7 @@ def main [repository: string plugin_ver: string do_patch: bool] {
     }
 
     if $repository == 'JosephTLyons/nu_plugin_units' {
-        open Cargo.toml | upsert dependencies.windows-sys '0.61.2' | upsert dependencies.nu-utils '0.108.0' | save -f Cargo.toml
+        open Cargo.toml | upsert dependencies.windows-sys '0.61.2' | upsert dependencies.nu-utils '0.109.0' | save -f Cargo.toml
         cargo update
         #open src/nu/mod.rs | str replace --all 'usage(&self)' 'description(&self)' | save -f src/nu/mod.rs
         #open src/nu/mod.rs | str replace --all 'as_f64' 'as_float' | save -f src/nu/mod.rs
@@ -77,14 +77,14 @@ def main [repository: string plugin_ver: string do_patch: bool] {
     #        update 22 '         ..' | 
     #        update 26 '         ..' | str join (char nl) | save -f src/ansi_to_image/nu_plugin.rs
     #}
-    #if $repository == 'mrxiaozhuox/nu_plugin_sled' {
-    #    open Cargo.toml | upsert dependencies.windows-sys '0.61.2' | save -f Cargo.toml
-    #    cargo update
+    if $repository == 'mrxiaozhuox/nu_plugin_sled' {
+        open Cargo.toml | upsert dependencies.windows-sys '0.61.2' | save -f Cargo.toml
+        cargo update
     #    open src/commands/open.rs | lines | 
     #        update 19 "     fn examples(&self) -> Vec<nu_protocol::Example<'_>> {" | str join (char nl) | save -f src/commands/open.rs
     #    open src/commands/save.rs | lines | 
     #        update 19 "     fn examples(&self) -> Vec<nu_protocol::Example<'_>> {" | str join (char nl) | save -f src/commands/save.rs
-    #}
+    }
     if $repository == 'nushell-works/nu_plugin_secret' {
         open Cargo.toml | upsert dependencies.windows-sys '0.61.2' | save -f Cargo.toml
         cargo update
