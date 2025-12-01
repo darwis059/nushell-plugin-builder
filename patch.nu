@@ -49,8 +49,10 @@ def main [repository: string plugin_ver: string do_patch: bool] {
     }
 
     if $repository == 'JosephTLyons/nu_plugin_units' {
-        open src/nu/mod.rs | str replace --all 'usage(&self)' 'description(&self)' | save -f src/nu/mod.rs
-        open src/nu/mod.rs | str replace --all 'as_f64' 'as_float' | save -f src/nu/mod.rs
+        open Cargo.toml | upsert dependencies.windows-sys '0.61.2' | upsert dependencies.nu-utils '0.108.0' | save -f Cargo.toml
+        cargo update
+        #open src/nu/mod.rs | str replace --all 'usage(&self)' 'description(&self)' | save -f src/nu/mod.rs
+        #open src/nu/mod.rs | str replace --all 'as_f64' 'as_float' | save -f src/nu/mod.rs
     }
 
     if $repository == 'FMotalleb/nu_plugin_audio_hook' {
