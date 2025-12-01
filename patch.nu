@@ -67,14 +67,14 @@ def main [repository: string plugin_ver: string do_patch: bool] {
             $codes | update 110 '' | update 111 '' | update 112 '' | update 109 '        Ok(Value::int(process.id() as i64, value_span))' | str join (char nl) | save -f src/main.rs
         }
     }
-    if $repository == 'FMotalleb/nu_plugin_image' {
-        open Cargo.toml | upsert dependencies.windows-sys '0.61.2' | upsert dependencies.lazy_static '1.4.0' | save -f Cargo.toml
-        cargo update
-        open src/logging/logger.rs | lines | update 0 'use lazy_static::lazy_static;' | str join (char nl) | save -f src/logging/logger.rs
-        open src/ansi_to_image/nu_plugin.rs | lines | 
-            update 22 '         ..' | 
-            update 26 '         ..' | str join (char nl) | save -f src/ansi_to_image/nu_plugin.rs
-    }
+    #if $repository == 'FMotalleb/nu_plugin_image' {
+    #    open Cargo.toml | upsert dependencies.windows-sys '0.61.2' | upsert dependencies.lazy_static '1.4.0' | save -f Cargo.toml
+    #    cargo update
+    #    open src/logging/logger.rs | lines | update 0 'use lazy_static::lazy_static;' | str join (char nl) | save -f src/logging/logger.rs
+    #    open src/ansi_to_image/nu_plugin.rs | lines | 
+    #        update 22 '         ..' | 
+    #        update 26 '         ..' | str join (char nl) | save -f src/ansi_to_image/nu_plugin.rs
+    #}
     if $repository == 'mrxiaozhuox/nu_plugin_sled' {
         open Cargo.toml | upsert dependencies.windows-sys '0.61.2' | save -f Cargo.toml
         cargo update
