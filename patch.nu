@@ -75,14 +75,14 @@ def main [repository: string plugin_ver: string do_patch: bool] {
     #        update 22 '         ..' | 
     #        update 26 '         ..' | str join (char nl) | save -f src/ansi_to_image/nu_plugin.rs
     #}
-    if $repository == 'mrxiaozhuox/nu_plugin_sled' {
-        open Cargo.toml | upsert dependencies.windows-sys '0.61.2' | save -f Cargo.toml
-        cargo update
-        open src/commands/open.rs | lines | 
-            update 19 "     fn examples(&self) -> Vec<nu_protocol::Example<'_>> {" | str join (char nl) | save -f src/commands/open.rs
-        open src/commands/save.rs | lines | 
-            update 19 "     fn examples(&self) -> Vec<nu_protocol::Example<'_>> {" | str join (char nl) | save -f src/commands/save.rs
-    }
+    #if $repository == 'mrxiaozhuox/nu_plugin_sled' {
+    #    open Cargo.toml | upsert dependencies.windows-sys '0.61.2' | save -f Cargo.toml
+    #    cargo update
+    #    open src/commands/open.rs | lines | 
+    #        update 19 "     fn examples(&self) -> Vec<nu_protocol::Example<'_>> {" | str join (char nl) | save -f src/commands/open.rs
+    #    open src/commands/save.rs | lines | 
+    #        update 19 "     fn examples(&self) -> Vec<nu_protocol::Example<'_>> {" | str join (char nl) | save -f src/commands/save.rs
+    #}
     if $repository == 'nushell-works/nu_plugin_secret' {
         open Cargo.toml | upsert dependencies.windows-sys '0.61.2' | save -f Cargo.toml
         cargo update
@@ -124,10 +124,10 @@ def main [repository: string plugin_ver: string do_patch: bool] {
         cat src/serve.rs
     }
 
-    if $repository == 'kik4444/nu_plugin_mime' {
-        open Cargo.toml | upsert dependencies.windows-sys '0.61.2' | upsert dependencies.nu-utils '0.108.0' | save -f Cargo.toml
-        cargo update
-    }
+    #if $repository == 'kik4444/nu_plugin_mime' {
+    #    open Cargo.toml | upsert dependencies.windows-sys '0.61.2' | upsert dependencies.nu-utils '0.108.0' | save -f Cargo.toml
+    #    cargo update
+    #}
 }
 
 def patch-desc [file] {
