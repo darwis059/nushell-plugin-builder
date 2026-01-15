@@ -168,7 +168,7 @@ def main [repository: string plugin_ver: string do_patch: bool] {
 
     if $repository == 'dam4rus/nu_plugin_nuts' {
         open src\commands\kv\delete.rs | lines |
-            update 127 "                })?"
+            update 127 "                })?" |
             str join (char nl) | save -f src\commands\kv\delete.rs
     }
 }
