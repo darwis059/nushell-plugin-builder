@@ -165,6 +165,12 @@ def main [repository: string plugin_ver: string do_patch: bool] {
             update 18 "     fn description(&self) -> &str {" |
             str join (char nl) | save -f src\command.rs
     }
+
+    if $repository == 'dam4rus/nu_plugin_nuts' {
+        open src\commands\kv\delete.rs | lines |
+            update 127 "                })?"
+            str join (char nl) | save -f src\commands\kv\delete.rs
+    }
 }
 
 def patch-desc [file] {
