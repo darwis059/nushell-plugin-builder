@@ -87,7 +87,7 @@ def main [repository: string plugin_ver: string do_patch: bool] {
     #        update 22 '         ..' | 
     #        update 26 '         ..' | str join (char nl) | save -f src/ansi_to_image/nu_plugin.rs
     #}
-    if $repository == 'x_mrxiaozhuox/nu_plugin_sled' {
+    if $repository == 'mrxiaozhuox/nu_plugin_sled' {
         open Cargo.toml | upsert dependencies.windows-sys '0.61.2' | save -f Cargo.toml
         cargo update
     #    open src/commands/open.rs | lines | 
@@ -107,7 +107,7 @@ def main [repository: string plugin_ver: string do_patch: bool] {
         open Cargo.toml | upsert dependencies.windows-sys '0.61.2' | save -f Cargo.toml
         cargo update
     }
-    if $repository == 'Elsie19/nu_plugin_nutext' {
+    if $repository == 'x_Elsie19/nu_plugin_nutext' {
         open src/commands/register.rs | lines | 
             update 46 "                Value::record(" |
             update 47 "                    record! {" |
