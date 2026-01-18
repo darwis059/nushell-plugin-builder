@@ -49,15 +49,15 @@ def main [repository: string plugin_ver: string do_patch: bool] {
     }
 
     if $repository == 'JosephTLyons/nu_plugin_units' {
-        open Cargo.toml | upsert dependencies.windows-sys '0.61.2' | upsert dependencies.nu-utils '0.109.0' | save -f Cargo.toml
+        open Cargo.toml | upsert dependencies.windows-sys '0.61.2' | upsert dependencies.nu-utils '0.110.0' | save -f Cargo.toml
         cargo update
         #open src/nu/mod.rs | str replace --all 'usage(&self)' 'description(&self)' | save -f src/nu/mod.rs
         #open src/nu/mod.rs | str replace --all 'as_f64' 'as_float' | save -f src/nu/mod.rs
     }
 
-    if $repository == 'FMotalleb/nu_plugin_audio_hook' {
-        open src/sound_make.rs | str replace --all 'as_f64' 'as_float' | save -f src/sound_make.rs
-    }
+    # if $repository == 'FMotalleb/nu_plugin_audio_hook' {
+    #     open src/sound_make.rs | str replace --all 'as_f64' 'as_float' | save -f src/sound_make.rs
+    # }
 
     if $repository == 'Com6235/nu-plugin-http-server' {
         open src/commands/mod.rs | lines |
@@ -72,6 +72,7 @@ def main [repository: string plugin_ver: string do_patch: bool] {
         nu toolbox.nu
     }
 
+    # last update 2 years ago
     if $repository == 'fdncred/nu_plugin_bg' {
         let codes = open src/main.rs | lines
         if (($codes | slice 109..112 | str join '' | str replace --regex --all '\s*' '') == 'Ok(Value::Int{val:process.id()asi64,internal_span:value_span,})') {
@@ -86,7 +87,7 @@ def main [repository: string plugin_ver: string do_patch: bool] {
     #        update 22 '         ..' | 
     #        update 26 '         ..' | str join (char nl) | save -f src/ansi_to_image/nu_plugin.rs
     #}
-    if $repository == 'mrxiaozhuox/nu_plugin_sled' {
+    if $repository == 'x_mrxiaozhuox/nu_plugin_sled' {
         open Cargo.toml | upsert dependencies.windows-sys '0.61.2' | save -f Cargo.toml
         cargo update
     #    open src/commands/open.rs | lines | 
@@ -122,7 +123,7 @@ def main [repository: string plugin_ver: string do_patch: bool] {
             str join (char nl) | save -f src/commands/stringret.rs
     }
     if $repository == 'dam4rus/nu_plugin_nuts' {
-        open Cargo.toml | upsert dependencies.windows-sys '0.61.2' | upsert dependencies.nu-utils '0.109.0' | save -f Cargo.toml
+        open Cargo.toml | upsert dependencies.windows-sys '0.61.2' | upsert dependencies.nu-utils '0.110.0' | save -f Cargo.toml
         cargo update
 
         open src/commands/kv/delete.rs | lines |
@@ -144,7 +145,7 @@ def main [repository: string plugin_ver: string do_patch: bool] {
     }
 
     #if $repository == 'kik4444/nu_plugin_mime' {
-    #    open Cargo.toml | upsert dependencies.windows-sys '0.61.2' | upsert dependencies.nu-utils '0.109.0' | save -f Cargo.toml
+    #    open Cargo.toml | upsert dependencies.windows-sys '0.61.2' | upsert dependencies.nu-utils '0.110.0' | save -f Cargo.toml
     #    cargo update
     #}
     if $repository == 'glcraft/nu_plugin_from_more' {
