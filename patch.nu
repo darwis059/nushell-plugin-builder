@@ -95,7 +95,7 @@ def main [repository: string plugin_ver: string do_patch: bool] {
     #    open src/commands/save.rs | lines | 
     #        update 19 "     fn examples(&self) -> Vec<nu_protocol::Example<'_>> {" | str join (char nl) | save -f src/commands/save.rs
     }
-    if $repository == 'nushell-works/nu_plugin_secret' {
+    if $repository == 'x_nushell-works/nu_plugin_secret' {
         open Cargo.toml | upsert dependencies.windows-sys '0.61.2' | save -f Cargo.toml
         cargo update
     }
@@ -107,7 +107,7 @@ def main [repository: string plugin_ver: string do_patch: bool] {
         open Cargo.toml | upsert dependencies.windows-sys '0.61.2' | save -f Cargo.toml
         cargo update
     }
-    if $repository == 'x_Elsie19/nu_plugin_nutext' {
+    if $repository == 'Elsie19/nu_plugin_nutext' {
         open src/commands/register.rs | lines | 
             update 46 "                Value::record(" |
             update 47 "                    record! {" |
@@ -152,7 +152,7 @@ def main [repository: string plugin_ver: string do_patch: bool] {
         open Cargo.toml | upsert dependencies.windows-sys '0.61.2' | save -f Cargo.toml
         cargo update
     }
-    if $repository == 'nushell-works/nu_plugin_nw_ulid' {
+    if $repository == 'x_nushell-works/nu_plugin_nw_ulid' {
         open Cargo.toml | upsert dependencies.windows-sys '0.61.2' | save -f Cargo.toml
         cargo update
     }    
@@ -167,7 +167,7 @@ def main [repository: string plugin_ver: string do_patch: bool] {
             str join (char nl) | save -f src\command.rs
     }
 
-    if $repository == 'dam4rus/nu_plugin_nuts' {
+    if $repository == 'x_dam4rus/nu_plugin_nuts' {
         open src\commands\kv\delete.rs | lines |
             update 127 "                })?" |
             str join (char nl) | save -f src\commands\kv\delete.rs
