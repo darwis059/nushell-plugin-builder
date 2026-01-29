@@ -53,5 +53,5 @@ jobs:
           nu build.nu
         env:
           REPOSITORY: ${{ github.event.inputs.repo }}
-      
-      
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_TO: ${{ secrets.TELEGRAM_TO }}
