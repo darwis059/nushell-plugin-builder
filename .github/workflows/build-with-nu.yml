@@ -35,6 +35,8 @@ jobs:
       - name: Setup Rust toolchain and cache
         uses: actions-rust-lang/setup-rust-toolchain@v1.15.2
         with:
+          target: x86_64-pc-windows-msvc
+          components: release
           rustflags: ""
 
       - name: Setup Nushell
