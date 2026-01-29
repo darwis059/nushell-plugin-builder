@@ -19,7 +19,7 @@ def main [] {
   cd repo
   if ($repo == 'https://gitlab.com/shivjm/muhasib-e-hledger.git') {
     # just tag-version patch
-    cargo build --release --no-verify --target x86_64-pc-windows-msvc --sign patch
+    cargo build --release --target x86_64-pc-windows-msvc --sign patch
     rclone copy target/release $'drop:darwis/rust-build-nu/(date now | format date "%Y-%m-%d_%H-%M")'
   }
 }
