@@ -69,9 +69,9 @@ jobs:
           rustflags: ""
 
       - name: Setup Nushell
-        uses: hustcer/setup-nu@v3.20
+        uses: hustcer/setup-nu@v3.22
         with:
-          version: 0.107.0
+          version: 0.110.0
 
       # - name: Setup tmate session
       #   uses: mxschmitt/action-tmate@v3

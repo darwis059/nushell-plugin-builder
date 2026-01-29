@@ -1,0 +1,58 @@
+name: rust-build-with-nu
+on: 
+  workflow_dispatch:
+    inputs:
+      repo:
+        description: 'Repository to build with nu'
+        required: true
+        default: 'nushell/nushell'
+
+run-name: Build with nu ${{ github.event.inputs.repo }}
+jobs:
+  build:
+    runs-on: window-latest
+    steps:
+      - name: checkout build.nu
+        uses: actions/checkout@v5
+        with:
+          sparse-checkout: |
+            build.nu
+          sparse-checkout-cone-mode: false
+          
+      # - name: "move build.nu aside"
+      #   run: cp build.nu ../
+
+      # - name: Checkout repository
+      #   uses: actions/checkout@v5
+      #   with:
+      #     repository: ${{ github.event.inputs.repo }}
+
+      # - name: "move back build.nu"
+      #   run: |
+      #     cp ../build.nu ./
+      #     cat build.nu
+
+      - name: Setup Rust toolchain and cache
+        uses: actions-rust-lang/setup-rust-toolchain@v1.15.2
+        with:
+          rustflags: ""
+
+      - name: Setup Nushell
+        uses: hustcer/setup-nu@v3.22
+        with:
+          version: 0.110.0
+
+      - name: Setup Rclone
+        uses: AnimMouse/setup-rclone@v1
+        with:
+          rclone_config: ${{ secrets.RCLONE_CONFIG }}
+
+      - name: Run Build
+        id: nu
+        run: |
+          echo "REPOSITORY=${{ github.event.inputs.repo }}" | Out-File -FilePath $env:GITHUB_ENV -Append
+          nu build.nu
+        env:
+          REPOSITORY: ${{ github.event.inputs.repo }}
+      
+      
