@@ -13,43 +13,39 @@ jobs:
     runs-on: "windows-latest"
     steps:
       - name: checkout build.nu
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6.0.1
         with:
           sparse-checkout: |
             build.nu
+            prepare-build.nu
           sparse-checkout-cone-mode: false
           
-      # - name: "move build.nu aside"
-      #   run: cp build.nu ../
-
-      # - name: Checkout repository
-      #   uses: actions/checkout@v5
-      #   with:
-      #     repository: ${{ github.event.inputs.repo }}
-
-      # - name: "move back build.nu"
-      #   run: |
-      #     cp ../build.nu ./
-      #     cat build.nu
-
-      - name: Setup Rust toolchain and cache
-        uses: actions-rust-lang/setup-rust-toolchain@v1.15.2
-        with:
-          target: x86_64-pc-windows-msvc
-          # toolchain: 1.94.0
-          # components: release
-          rustflags: ""
-
       - name: Setup Nushell
         uses: hustcer/setup-nu@v3.22
         with:
           version: 0.110.0
 
       - name: Setup Rclone
-        uses: AnimMouse/setup-rclone@v1
+        uses: AnimMouse/setup-rclone@v1.12.0
         with:
           rclone_config: ${{ secrets.RCLONE_CONFIG }}
 
+      - name: Prepare Build
+        run: |
+          echo "REPOSITORY=${{ github.event.inputs.repo }}" | Out-File -FilePath $env:GITHUB_ENV -Append
+          nu prepare-build.nu
+        env:
+          REPOSITORY: ${{ github.event.inputs.repo }}
+
+      - name: Setup Rust toolchain and cache    
+        uses: actions-rust-lang/setup-rust-toolchain@v1.15.2
+        with:
+          target: x86_64-pc-windows-msvc
+          rust-src-dir: repo
+          # toolchain: 1.94.0
+          # components: release
+          rustflags: ""
+    
       - name: Run Build
         id: nu
         run: |
