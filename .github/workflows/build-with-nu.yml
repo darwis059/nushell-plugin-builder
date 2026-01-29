@@ -10,7 +10,7 @@ on:
 run-name: Build with nu ${{ github.event.inputs.repo }}
 jobs:
   build:
-    runs-on: window-latest
+    runs-on: "windows-latest"
     steps:
       - name: checkout build.nu
         uses: actions/checkout@v5
