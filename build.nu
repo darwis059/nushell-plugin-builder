@@ -13,11 +13,13 @@ def main [] {
   print (ls)
   print (git version)
   print (rclone listremotes)
+  print (cargo --version)
 
   # build
   cd repo
   if ($repo == 'https://gitlab.com/shivjm/muhasib-e-hledger.git') {
-    just tag-version patch
+    # just tag-version patch
+    cargo release --no-publish --no-verify --sign patch
     rclone copy target/release $'drop:darwis/rust-build-nu/(date now | format date "%Y-%m-%d_%H-%M")'
   }
 }
