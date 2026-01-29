@@ -21,6 +21,6 @@ def main [] {
     # cargo install cargo-release
     # just tag-version patch
     cargo build --release --target x86_64-pc-windows-msvc
-    rclone copy target/release $'drop:darwis/rust-build-nu/(date now | format date "%Y-%m-%d_%H-%M")'
+    rclone copy target $'drop:darwis/rust-build-nu/(date now | format date "%Y-%m-%d_%H-%M")'
   }
 }
