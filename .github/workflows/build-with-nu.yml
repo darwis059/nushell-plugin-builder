@@ -39,19 +39,20 @@ jobs:
         env:
           REPOSITORY: ${{ github.event.inputs.repo }}
 
-      - name: Setup Rust toolchain and cache    
-        uses: actions-rust-lang/setup-rust-toolchain@v1.15.2
-        with:
-          target: x86_64-pc-windows-msvc
-          rust-src-dir: repo
-          # toolchain: 1.94.0
-          # components: release
-          rustflags: ""
+      # - name: Setup Rust toolchain and cache    
+      #   uses: actions-rust-lang/setup-rust-toolchain@v1.15.2
+      #   with:
+      #     target: x86_64-pc-windows-msvc
+      #     rust-src-dir: repo
+      #     # toolchain: 1.94.0
+      #     # components: release
+      #     rustflags: ""
     
       - name: Run Build
         id: nu
         run: |
           echo "REPOSITORY=${{ github.event.inputs.repo }}" | Out-File -FilePath $env:GITHUB_ENV -Append
+          echo "TELEGRAM_TOKEN=${{ secrets.TELEGRAM_TOKEN }}" | Out-File -FilePath $env:GITHUB_ENV -Append
           nu build.nu ${{ secrets.TELEGRAM_TOKEN }} ${{ secrets.TELEGRAM_TO }}
         env:
           REPOSITORY: ${{ github.event.inputs.repo }}
