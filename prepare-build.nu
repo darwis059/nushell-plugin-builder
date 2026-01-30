@@ -12,5 +12,4 @@ def main [n8n_auth] {
   let repo = $env.REPOSITORY
   git clone $repo repo
   print (ls repo)
-  print (ls)
 }

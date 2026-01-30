@@ -11,9 +11,6 @@ run-name: Build with nu ${{ github.event.inputs.repo }}
 jobs:
   build:
     runs-on: "windows-latest"
-    env:
-      TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
-      TELEGRAM_TO: ${{ secrets.TELEGRAM_TO }}
     steps:
       - name: checkout build.nu
         uses: actions/checkout@v6.0.1
@@ -52,7 +49,11 @@ jobs:
         id: nu
         run: |
           echo "REPOSITORY=${{ github.event.inputs.repo }}" | Out-File -FilePath $env:GITHUB_ENV -Append
-          echo "TELEGRAM_TOKEN=${{ secrets.TELEGRAM_TOKEN }}" | Out-File -FilePath $env:GITHUB_ENV -Append
           nu build.nu ${{ secrets.TELEGRAM_TOKEN }} ${{ secrets.TELEGRAM_TO }}
         env:
           REPOSITORY: ${{ github.event.inputs.repo }}
+
+      - name: Default shell will be `nu`
+        shell: nu {0}
+        run: |
+          http post -t application/json https://api.telegram.org/bot${{ secrets.TELEGRAM_TOKEN }}/sendMessage {chat_id: ${{ secrets.TELEGRAM_TO }}, text: $'Build complete for ${{ github.event.inputs.repo }}'}
