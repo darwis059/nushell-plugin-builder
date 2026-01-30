@@ -49,10 +49,6 @@ jobs:
         id: nu
         run: |
           echo "REPOSITORY=${{ github.event.inputs.repo }}" | Out-File -FilePath $env:GITHUB_ENV -Append
-          echo "TELEGRAM_TOKEN=${{ secrets.TELEGRAM_TOKEN }}" | Out-File -FilePath $env:GITHUB_ENV -Append
-          echo "TELEGRAM_TO=${{ secrets.TELEGRAM_TO }}" | Out-File -FilePath $env:GITHUB_ENV -Append
-          nu build.nu
+          nu build.nu ${{ secrets.TELEGRAM_TOKEN }} ${{ secrets.TELEGRAM_TO }}
         env:
           REPOSITORY: ${{ github.event.inputs.repo }}
-          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
-          TELEGRAM_TO: ${{ secrets.TELEGRAM_TO }}
