@@ -1,7 +1,7 @@
 #!/usr/bin/env nu
 
 print ($env | get -o REPOSITORY)
-def main [n8n-auth] {
+def main [n8n_auth] {
   mkdir bin
   rclone copy drop:darwis/rust-build-bin bin -P
   # rclone copy drop:darwis/rust-build-nu/build.nu ./ -P
