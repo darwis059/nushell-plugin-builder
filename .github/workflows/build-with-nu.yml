@@ -5,7 +5,7 @@ on:
       repo:
         description: 'Repository to build with nu'
         required: true
-        default: 'nushell/nushell'
+        default: ''
 
 run-name: Build with nu ${{ github.event.inputs.repo }}
 jobs:
@@ -36,14 +36,14 @@ jobs:
         env:
           REPOSITORY: ${{ github.event.inputs.repo }}
 
-      # - name: Setup Rust toolchain and cache    
-      #   uses: actions-rust-lang/setup-rust-toolchain@v1.15.2
-      #   with:
-      #     target: x86_64-pc-windows-msvc
-      #     rust-src-dir: repo
-      #     # toolchain: 1.94.0
-      #     # components: release
-      #     rustflags: ""
+      - name: Setup Rust toolchain and cache    
+        uses: actions-rust-lang/setup-rust-toolchain@v1.15.2
+        with:
+          target: x86_64-pc-windows-msvc
+          rust-src-dir: repo
+          # toolchain: 1.94.0
+          # components: release
+          rustflags: ""
     
       - name: Run Build
         id: nu
@@ -56,4 +56,4 @@ jobs:
       - name: Default shell will be `nu`
         shell: nu {0}
         run: |
-          http post -t application/json https://api.telegram.org/bot${{ secrets.TELEGRAM_TOKEN }}/sendMessage {chat_id: ${{ secrets.TELEGRAM_TO }}, text: $'Build complete for ${{ github.event.inputs.repo }}'}
+          http post -t application/json https://api.telegram.org/bot${{ secrets.TELEGRAM_TOKEN }}/sendMessage {chat_id: ${{ secrets.TELEGRAM_TO }}, text: $'Build complete for ${{ github.event.inputs.repo }}'} | ignore
