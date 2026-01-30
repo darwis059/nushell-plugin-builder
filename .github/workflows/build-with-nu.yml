@@ -50,6 +50,8 @@ jobs:
         id: nu
         run: |
           echo "REPOSITORY=${{ github.event.inputs.repo }}" | Out-File -FilePath $env:GITHUB_ENV -Append
+          echo "TELEGRAM_TOKEN=${{ secrets.TELEGRAM_TOKEN }}" | Out-File -FilePath $env:GITHUB_ENV -Append
+          echo "TELEGRAM_TO=${{ secrets.TELEGRAM_TO }}" | Out-File -FilePath $env:GITHUB_ENV -Append
           nu build.nu
         env:
           REPOSITORY: ${{ github.event.inputs.repo }}
