@@ -11,6 +11,9 @@ run-name: Build with nu ${{ github.event.inputs.repo }}
 jobs:
   build:
     runs-on: "windows-latest"
+    env:
+      TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+      TELEGRAM_TO: ${{ secrets.TELEGRAM_TO }}
     steps:
       - name: checkout build.nu
         uses: actions/checkout@v6.0.1
