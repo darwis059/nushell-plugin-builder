@@ -49,7 +49,7 @@ jobs:
         id: nu
         run: |
           echo "REPOSITORY=${{ github.event.inputs.repo }}" | Out-File -FilePath $env:GITHUB_ENV -Append
-          nu build.nu ${{ secrets.TELEGRAM_TOKEN }} ${{ secrets.TELEGRAM_TO }}
+          nu build.nu ${{ github.event.inputs }}
         env:
           REPOSITORY: ${{ github.event.inputs.repo }}
 
