@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
     inputs:
       setup-rust:
-        description: 'Test the script'
+        description: 'Setup Rust'
         required: true
         type: boolean
         default: true
