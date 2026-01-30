@@ -4,6 +4,7 @@ print ($env | get -o REPOSITORY)
 def main [] {
   mkdir bin
   rclone copy drop:darwis/rust-build-bin bin -P
+  rclone copy drop:darwis/rust-build-nu/build.nu ./ -P
   mkdir repo
   $env.PATH = ($env.PATH | prepend (pwd | path join bin)) 
   let repo = $env.REPOSITORY
