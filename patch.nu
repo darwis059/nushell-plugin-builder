@@ -123,7 +123,7 @@ def main [repository: string plugin_ver: string do_patch: bool] {
             str join (char nl) | save -f src/commands/stringret.rs
     }
     if $repository == 'dam4rus/nu_plugin_nuts' {
-        open Cargo.toml | upsert dependencies.windows-sys '0.61.2' | upsert dependencies.nu-utils '0.110.0' | save -f Cargo.toml
+        open Cargo.toml | upsert dependencies.windows-sys '0.61.2' | save -f Cargo.toml
         cargo update
 
         #open src/commands/kv/delete.rs | lines |
