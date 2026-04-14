@@ -88,8 +88,10 @@ def main [repository: string plugin_ver: string do_patch: bool] {
     #        update 26 '         ..' | str join (char nl) | save -f src/ansi_to_image/nu_plugin.rs
     #}
     if $repository == 'mrxiaozhuox/nu_plugin_sled' {
-        open Cargo.toml | upsert dependencies.windows-sys '0.61.2' | save -f Cargo.toml
+    #    open Cargo.toml | upsert dependencies.windows-sys '0.61.2' | save -f Cargo.toml
+        rm Cargo.lock
         cargo update
+        cargo update -p libc
     #    open src/commands/open.rs | lines | 
     #        update 19 "     fn examples(&self) -> Vec<nu_protocol::Example<'_>> {" | str join (char nl) | save -f src/commands/open.rs
     #    open src/commands/save.rs | lines | 
