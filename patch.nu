@@ -103,7 +103,8 @@ def main [repository: string plugin_ver: string do_patch: bool] {
         cargo update
     }
     if $repository == 'ArmoredPony/nu_plugin_hashes' {
-        open Cargo.toml | upsert dependencies.windows-sys '0.61.2' | save -f Cargo.toml
+        open Cargo.toml | upsert dependencies.windows-sys '0.61.2' | upsert dependencies.blake3 { version: "=1.8.3", optional: true, default-features: false, features: ["std", "traits-preview"] } | save -f Cargo.toml
+        cargo update -p blake3
         cargo update
     }
     if $repository == 'windtail/nu_plugin_unzip' {
