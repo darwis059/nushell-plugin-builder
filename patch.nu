@@ -114,6 +114,11 @@ def main [repository: string plugin_ver: string do_patch: bool] {
         open Cargo.toml | upsert dependencies.windows-sys '0.61.2' | save -f Cargo.toml
         cargo update
     }
+    if $repository == 'punund/nu_plugin_socket' {
+        open src/connect.rs | lines |
+            update 189 "path_columns: Vec::new(),});" |
+            str join (char nl) | save -f src/connect.rs
+    }
     if $repository == 'Elsie19/nu_plugin_nutext' {
         open src/commands/register.rs | lines | 
             update 46 "                Value::record(" |
