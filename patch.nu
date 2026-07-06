@@ -208,7 +208,7 @@ def main [repository: string plugin_ver: string do_patch: bool] {
         #    { line: 101, text: '         return Err(ShellError::Generic {' },
         #    { line: 112, text: '         .ok_or_else(|| ShellError::Generic {' }
         #]
-        patch-file 'src\secret_types\operations.rs' 'ShellError::GenericError' 'ShellError::Generic '
+        # patch-file 'src\secret_types\operations.rs' 'ShellError::GenericError' 'ShellError::Generic '
         patch-file-line --file_path 'src\commands\config_export.rs' [
             { line: 67, text: '             .input_output_types(vec![(Type::Nothing, Type::record())])' }
         ]
@@ -232,6 +232,19 @@ def main [repository: string plugin_ver: string do_patch: bool] {
         ]
         patch-file-line --file_path 'src\commands\unwrap.rs' [
             { line: 29, text: '                    Type::record(),' }
+        ]
+    }
+
+    if $repository == 'lizclipse/nu_plugin_ulid' {
+        patch-file-line --file_path  'src\plugin.rs' [
+            { line: 56, text: '                       Type::Record(vec![' },
+            { line: 59, text: '                     ].into()),' },
+            { line: 63, text: '                       Type::Record(vec![' },
+            { line: 66, text: '                     ].into()),' },
+            { line: 70, text: '                     Type::Record(vec![(K_RND.into(), Type::String)].into()),' },
+            { line: 78, text: '                     Type::Record(vec![(K_RND.into(), Type::Int)].into()),' },
+            { line: 244, text: '                       Type::Record(vec![' },
+            { line: 247, text: '                     ].into()),' }
         ]
     }
 }
