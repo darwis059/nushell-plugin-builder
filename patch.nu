@@ -208,6 +208,7 @@ def main [repository: string plugin_ver: string do_patch: bool] {
         #    { line: 101, text: '         return Err(ShellError::Generic {' },
         #    { line: 112, text: '         .ok_or_else(|| ShellError::Generic {' }
         #]
+        patch-file 'src\secret_types\operations.rs' 'ShellError::GenericError' 'ShellError::Generic'
         patch-file-line --file_path 'src\commands\config_export.rs' [
             { line: 67, text: '             .input_output_types(vec![(Type::Nothing, Type::record())])' }
         ]
