@@ -163,10 +163,6 @@ def main [repository: string plugin_ver: string do_patch: bool] {
         cat src/serve.rs
     }
 
-    #if $repository == 'kik4444/nu_plugin_mime' {
-    #    open Cargo.toml | upsert dependencies.windows-sys '0.61.2' | upsert dependencies.nu-utils '0.110.0' | save -f Cargo.toml
-    #    cargo update
-    #}
     if $repository == 'glcraft/nu_plugin_from_more' {
         open Cargo.toml | upsert dependencies.windows-sys '0.61.2' | save -f Cargo.toml
         cargo update
@@ -247,6 +243,15 @@ def main [repository: string plugin_ver: string do_patch: bool] {
         ]
         patch-file-line --file_path  'src\parse.rs' [
             { line: 90, text: '   .map(|serial| hex::encode(serial.as_ref() as &[u8]))' }
+        ]
+    }
+
+    if $repository == 'kik4444/nu_plugin_mime' {
+    #    open Cargo.toml | upsert dependencies.windows-sys '0.61.2' | upsert dependencies.nu-utils '0.110.0' | save -f Cargo.toml
+    #    cargo update
+        patch-file-line --file_path  'src\guess.rs' [
+            { line: 26, text: '                       Type::Table(vec![,
+            { line: 29, text: '                       ].into()),' }
         ]
     }
 }
