@@ -116,6 +116,16 @@ def main [repository: string plugin_ver: string do_patch: bool] {
             update 157 "                    Type::Table(vec![" |
             update 161 "                    ].into())" | str join (char nl) | save -f src\lib.rs
     }
+
+    if $repository == 'yybit/nu_plugin_x509' {
+        open src\gen.rs | lines |
+            update 55 "                   Type::Record(vec![" |
+            update 58 "                   ].into())" | str join (char nl) | save -f src\gen.rs
+
+        open src\parse.rs | lines |
+            update 89 "                   .map(|serial| hex::encode(serial.as_ref() as &[u8]))" | str join (char nl) | save -f src\parse.rs
+    }
+
     if $repository == 'alex-kattathra-johnson/nu_plugin_ws' {
         open Cargo.toml | upsert dependencies.windows-sys '0.61.2' | save -f Cargo.toml
         cargo update
