@@ -117,15 +117,6 @@ def main [repository: string plugin_ver: string do_patch: bool] {
             update 161 "                    ].into())," | str join (char nl) | save -f src\lib.rs
     }
 
-    if $repository == 'yybit/nu_plugin_x509' {
-        open src\gen.rs | lines |
-            update 55 "                   Type::Record(vec![" |
-            update 58 "                   ].into())" | str join (char nl) | save -f src\gen.rs
-
-        open src\parse.rs | lines |
-            update 89 "                   .map(|serial| hex::encode(serial.as_ref() as &[u8]))" | str join (char nl) | save -f src\parse.rs
-    }
-
     if $repository == 'alex-kattathra-johnson/nu_plugin_ws' {
         open Cargo.toml | upsert dependencies.windows-sys '0.61.2' | save -f Cargo.toml
         cargo update
@@ -245,6 +236,16 @@ def main [repository: string plugin_ver: string do_patch: bool] {
             { line: 78, text: '                     Type::Record(vec![(K_RND.into(), Type::Int)].into()),' },
             { line: 244, text: '                       Type::Record(vec![' },
             { line: 247, text: '                     ].into()),' }
+        ]
+    }
+    
+    if $repository == 'yybit/nu_plugin_x509' {
+        patch-file-line --file_path  'src\gen.rs' [
+            { line: 56, text: '                   Type::Record(vec![' },
+            { line: 59, text: '                   ].into()),' }
+        ]
+        patch-file-line --file_path  'src\parse.rs' [
+            { line: 90, text: '   .map(|serial| hex::encode(serial.as_ref() as &[u8]))' }
         ]
     }
 }
