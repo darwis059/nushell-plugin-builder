@@ -145,10 +145,10 @@ def main [repository: string plugin_ver: string do_patch: bool] {
         open Cargo.toml | upsert dependencies.windows-sys '0.61.2' | upsert dependencies.nu-utils '0.114.0' | save -f Cargo.toml
         cargo update
 
-        #patch-file-line --file_path  'src\gen.rs' [
-        #    { line: 56, text: '                   Type::Record(vec![' },
-        #    { line: 59, text: '                   ].into()),' }
-        #]
+        patch-file-line --file_path  'src\commands\publish.rs' [
+            { line: 28, text: '           vec![' },
+            { line: 35, text: '           vec![' }
+        ]
     }
 
     if $repository == 'cablehead/nu_plugin_http_serve' {
