@@ -230,7 +230,7 @@ def main [repository: string plugin_ver: string do_patch: bool] {
             { line: 18, text: '             .input_output_types(vec![(Type::Nothing, Type::record())])' }
         ]
         patch-file-line --file_path 'src\commands\unwrap.rs' [
-            { line: 18, text: '                    Type::record(),' }
+            { line: 29, text: '                    Type::record(),' }
         ]
     }
 }
