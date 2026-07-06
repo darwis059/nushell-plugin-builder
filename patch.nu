@@ -115,7 +115,6 @@ def main [repository: string plugin_ver: string do_patch: bool] {
         open src\lib.rs | lines |
             update 157 "                    Type::Table(vec![" |
             update 161 "                    ].into())," | str join (char nl) | save -f src\lib.rs
-        open --raw src\lib.rs | print
     }
 
     if $repository == 'yybit/nu_plugin_x509' {
