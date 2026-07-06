@@ -200,6 +200,7 @@ def main [repository: string plugin_ver: string do_patch: bool] {
             update 127 "                })?" |
             str join (char nl) | save -f src\commands\kv\delete.rs
     }
+    cargo check
 }
 
 def patch-desc [file] {
