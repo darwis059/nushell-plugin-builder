@@ -243,6 +243,7 @@ def patch-desc [file] {
 def patch-file [file: string old:string new: string] {
     let src = open $file
     if ($src | find $new | is-empty) {
+        print $'replace all ($old) with ($new) in file ($file)'
         $src | str replace --all $old $new | save -f $file
     }
 }
