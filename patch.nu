@@ -200,6 +200,39 @@ def main [repository: string plugin_ver: string do_patch: bool] {
             update 127 "                })?" |
             str join (char nl) | save -f src\commands\kv\delete.rs
     }
+
+    if $repository == 'nushell-works/nu_plugin_secret' {
+        patch-file-line --file_path 'src\secret_types\operations.rs' [
+            { line: 50, text: '        _ => Err(ShellError::Generic {' },
+            { line: 85, text: '             return Err(ShellError::Generic {' },
+            { line: 101, text: '         return Err(ShellError::Generic {' },
+            { line: 112, text: '         .ok_or_else(|| ShellError::Generic {' }
+        ]
+        patch-file-line --file_path 'src\commands\config_export.rs' [
+            { line: 67, text: '             .input_output_types(vec![(Type::Nothing, Type::record())])' }
+        ]
+        patch-file-line --file_path 'src\commands\config_import.rs' [
+            { line: 98, text: '             .input_output_types(vec![(Type::Nothing, Type::record())])' }
+        ]
+        patch-file-line --file_path 'src\commands\config_reset.rs' [
+            { line: 86, text: '             .input_output_types(vec![(Type::Nothing, Type::record())])' }
+        ]
+        patch-file-line --file_path 'src\commands\config_show.rs' [
+            { line: 91, text: '             .input_output_types(vec![(Type::Nothing, Type::record())])' }
+        ]
+        patch-file-line --file_path 'src\commands\config_validate.rs' [
+            { line: 181, text: '             .input_output_types(vec![(Type::Nothing, Type::record())])' }
+        ]
+        patch-file-line --file_path 'src\commands\configure.rs' [
+            { line: 105, text: '             .input_output_types(vec![(Type::Nothing, Type::record())])' }
+        ]
+        patch-file-line --file_path 'src\commands\info.rs' [
+            { line: 18, text: '             .input_output_types(vec![(Type::Nothing, Type::record())])' }
+        ]
+        patch-file-line --file_path 'src\commands\unwrap.rs' [
+            { line: 18, text: '                    Type::record(),' }
+        ]
+    }
 }
 
 def patch-desc [file] {
@@ -211,4 +244,31 @@ def patch-file [file: string old:string new: string] {
     if ($src | find $new | is-empty) {
         $src | str replace --all $old $new | save -f $file
     }
+}
+
+def patch-file-line [
+    --file_path: path,                               # The file to modify
+    replacements: table<line: int, text: string>   # Table containing line numbers (1-indexed) and new text
+] {
+    # 1. Read the file as raw text to avoid auto-parsing, then split by newlines
+    let original_lines = (open --raw $file_path | lines)
+    
+    # 2. Iterate through the lines and swap out text if the index matches
+    let patched_lines = ($original_lines | enumerate | each {|row|
+        
+        # We add 1 to Nushell's 0-based index so it matches your 1-based input
+        let match = ($replacements | where line == ($row.index + 1))
+        
+        if ($match | is-empty) {
+            $row.item
+        } else {
+            $match | first | get text
+        }
+    })
+    
+    # 3. Join the lines back together, ensure a trailing newline, and overwrite the file
+    let result = (($patched_lines | str join (char newline)) + (char newline))
+    $result | save --force $file_path
+    
+    print $"Successfully patched ($file_path)!"
 }
