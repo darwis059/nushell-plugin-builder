@@ -87,6 +87,12 @@ jobs:
           PLUGIN_VER: ${{ github.event.inputs.nu_plugin_ver }}
           DO_PATCH: ${{ github.event.inputs.patch }}
 
+      - name: "Cargo Check"
+        shell: cmd
+        run: |
+          PATH C:\Strawberry\perl\bin;%PATH%
+          cargo check
+
       - name: "Build (Release mode)"
         shell: cmd
         run: |
