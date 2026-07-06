@@ -254,6 +254,17 @@ def main [repository: string plugin_ver: string do_patch: bool] {
             { line: 29, text: '                       ].into()),' }
         ]
     }
+
+    if $repository == 'adevore/nu_plugin_ldap' {
+        patch-file-line --file_path  'src\commands\search\command.rs' [
+            { line: 34, text: '                   Type::List(Box::new(Type::Record(vec![' },
+            { line: 38, text: '                   ].into()))),' }
+        ]
+        patch-file-line --file_path  'src\commands\table.rs' [
+            { line: 42, text: '                   Type::List(Box::new(Type::Record(vec![' },
+            { line: 46, text: '                   ].into()))),' }
+        ]
+    }
 }
 
 def patch-desc [file] {
