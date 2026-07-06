@@ -142,17 +142,13 @@ def main [repository: string plugin_ver: string do_patch: bool] {
 #            str join (char nl) | save -f src/commands/stringret.rs
 #    }
     if $repository == 'dam4rus/nu_plugin_nuts' {
-        open Cargo.toml | upsert dependencies.windows-sys '0.61.2' | save -f Cargo.toml
+        open Cargo.toml | upsert dependencies.windows-sys '0.61.2' | upsert dependencies.nu-utils '0.114.0' | save -f Cargo.toml
         cargo update
 
-        #open src/commands/kv/delete.rs | lines |
-        #    update 118 "            Value::String { val, internal_span, .. } => jetstream" |
-        #    update 131 "            ..} => {" |
-        #    str join (char nl) | save -f src/commands/kv/delete.rs
-
-        #open src/commands/publish.rs | lines |
-        #    update 178 "             Value::Record { val, internal_span, .. } => {" |
-        #    str join (char nl) | save -f src/commands/publish.rs
+        #patch-file-line --file_path  'src\gen.rs' [
+        #    { line: 56, text: '                   Type::Record(vec![' },
+        #    { line: 59, text: '                   ].into()),' }
+        #]
     }
 
     if $repository == 'cablehead/nu_plugin_http_serve' {
