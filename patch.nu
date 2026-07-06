@@ -233,6 +233,7 @@ def main [repository: string plugin_ver: string do_patch: bool] {
             { line: 63, text: '                       Type::Record(vec![' },
             { line: 66, text: '                     ].into()),' },
             { line: 70, text: '                     Type::Record(vec![(K_RND.into(), Type::String)].into()),' },
+            { line: 74, text: '                     Type::Record(vec![(K_RND.into(), Type::String)].into()),' },
             { line: 78, text: '                     Type::Record(vec![(K_RND.into(), Type::Int)].into()),' },
             { line: 244, text: '                       Type::Record(vec![' },
             { line: 247, text: '                     ].into()),' }
