@@ -1,0 +1,39 @@
+name: Build TDLib for Windows 64-bit
+
+on:
+  workflow_dispatch: # Allows you to run the workflow manually from the Actions tab
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout tdlib repository
+        uses: actions/checkout@v5
+        with:
+          repository: tdlib/td
+          path: td
+          # If you want a specific tag/commit, you can add it here:
+          # ref: 'v1.8.0' 
+
+      - name: Install gperf
+        run: choco install gperf
+
+      - name: Configure CMake
+        run: |
+          cd td
+          mkdir build
+          cd build
+          cmake -A x64 -DCMAKE_INSTALL_PREFIX:PATH=../../tdlib -DCMAKE_BUILD_TYPE=Release ..
+
+      - name: Build TDLib
+        run: |
+          cd td/build
+          cmake --build . --target install --config Release
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: tdlib-windows-x64
+          path: tdlib/
+          # Optional: You can specify how long to keep the artifact
+          # retention-days: 7 
