@@ -7,60 +7,59 @@ jobs:
   build:
     runs-on: windows-latest
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-      
-    - name: Checkout TDLib
-      uses: actions/checkout@v4
-      with:
-        repository: tdlib/td
-        path: td
-        # Optional: Specify a branch/tag/commit if you need a specific version
-        # ref: v1.8.0 
+      - name: Checkout repository
+        uses: actions/checkout@v5
 
-    # STREAMING_CHUNK:Setting up caching for vcpkg to drastically speed up future builds...
-    - name: Cache vcpkg dependencies
-      uses: actions/cache@v4
-      id: vcpkg-cache
-      with:
-        path: |
-          C:\vcpkg\packages
-          C:\vcpkg\installed
-        key: ${{ runner.os }}-vcpkg-${{ hashFiles('td/CMakeLists.txt') }}
-        restore-keys: |
-          ${{ runner.os }}-vcpkg-
+      # TDLib requires PHP for generating some code files during the build process
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3' # You can use any recent PHP 8.x version
 
-    # STREAMING_CHUNK:Installing necessary C++ dependencies (zlib, openssl, gperf) using vcpkg...
-    - name: Install dependencies via vcpkg
-      run: |
-        # Using the vcpkg installation provided by the GitHub Actions runner environment
-        vcpkg install gperf:x64-windows openssl:x64-windows zlib:x64-windows
-      shell: cmd
+      - name: Cache vcpkg dependencies
+        uses: actions/cache@v4
+        id: vcpkg-cache
+        with:
+          path: |
+            td/vcpkg/installed
+            td/vcpkg/packages
+            td/vcpkg/downloads
+          # The cache key is bound to the specific vcpkg commit required by TDLib
+          key: ${{ runner.os }}-vcpkg-bc3512a509f9d29b37346a7e7e929f9a26e66c7e
+          restore-keys: |
+            ${{ runner.os }}-vcpkg-
 
-    # STREAMING_CHUNK:Configuring the build with CMake, linking the vcpkg toolchain...
-    - name: Configure CMake
-      run: |
-        cd td
-        mkdir build
-        cd build
-        # The key to fixing "Can't find zlib": passing the vcpkg toolchain file to CMake
-        cmake -A x64 -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake ..
+      - name: Build and Install TDLib
+        shell: pwsh
+        run: |
+          # 1. Clone TDLib
+          git clone https://github.com/tdlib/td.git
+          cd td
+          
+          # 2. Clone vcpkg and checkout the exact commit recommended by TDLib
+          git clone https://github.com/Microsoft/vcpkg.git
+          cd vcpkg
+          git checkout bc3512a509f9d29b37346a7e7e929f9a26e66c7e
+          
+          # 3. Bootstrap vcpkg and install dependencies (zlib, openssl, gperf)
+          ./bootstrap-vcpkg.bat
+          ./vcpkg.exe install gperf:x64-windows openssl:x64-windows zlib:x64-windows
+          cd ..
+          
+          # 4. Prepare CMake build directory
+          Remove-Item build -Force -Recurse -ErrorAction SilentlyContinue
+          mkdir build
+          cd build
+          
+          # 5. Configure and build targetting the "td/tdlib" directory
+          cmake -A x64 -DCMAKE_INSTALL_PREFIX:PATH=../tdlib -DCMAKE_TOOLCHAIN_FILE:FILEPATH=../vcpkg/scripts/buildsystems/vcpkg.cmake ..
+          cmake --build . --target install --config Release
+          cd ../..
 
-    # STREAMING_CHUNK:Compiling TDLib...
-    - name: Build TDLib
-      run: |
-        cd td/build
-        cmake --build . --config Release
-
-    # STREAMING_CHUNK:Uploading the compiled binaries as workflow artifacts...
-    - name: Upload Artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: tdlib-release-windows-x64
-        path: |
-          td/build/Release/*.dll
-          td/build/Release/*.lib
-          td/build/Release/*.exe
-        # Also include any generated libraries at the root of the build dir, depending on tdlib structure
-        # path: td/build/**/*.dll
-        if-no-files-found: warn
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: tdlib-release-windows-x64
+          # Because of -DCMAKE_INSTALL_PREFIX:PATH=../tdlib, all final artifacts are placed here
+          path: td/tdlib/
+          if-no-files-found: error
