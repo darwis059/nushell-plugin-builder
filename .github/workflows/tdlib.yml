@@ -15,10 +15,14 @@ jobs:
       with:
         php-version: '8.3'
 
-    - name: Clone TDLib and vcpkg repositories
+    - name: Clone TDLib
       shell: pwsh
       run: |
         git clone https://github.com/tdlib/td.git
+        
+    - name: Clone vcpkg and checkout specific commit
+      shell: pwsh
+      run: |
         cd td
         git clone https://github.com/Microsoft/vcpkg.git
         cd vcpkg
@@ -36,27 +40,34 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-vcpkg-
 
-    - name: Build and Install TDLib
+    - name: Build and Install dependencies (vcpkg)
       shell: pwsh
       run: |
-        # Move into vcpkg and install dependencies
         cd td/vcpkg
         ./bootstrap-vcpkg.bat
         ./vcpkg.exe install gperf:x64-windows openssl:x64-windows zlib:x64-windows
-        
-        # Move back to td directory
-        cd ..
-        
+
+    - name: Build and Install TDLib
+      shell: pwsh
+      run: |
+        cd td
         Remove-Item build -Force -Recurse -ErrorAction SilentlyContinue
         mkdir build
         cd build
         
-        # Configure and build
-        cmake -A x64 -DCMAKE_INSTALL_PREFIX:PATH=../tdlib -DCMAKE_TOOLCHAIN_FILE:FILEPATH=../vcpkg/scripts/buildsystems/vcpkg.cmake ..
+        # Configure CMake with explicit vcpkg triplet and zlib root to prevent linker errors
+        cmake -A x64 `
+          -DCMAKE_INSTALL_PREFIX:PATH=../tdlib `
+          -DCMAKE_TOOLCHAIN_FILE:FILEPATH=../vcpkg/scripts/buildsystems/vcpkg.cmake `
+          -DVCPKG_TARGET_TRIPLET=x64-windows `
+          -DZLIB_ROOT=../vcpkg/installed/x64-windows `
+          ..
+          
         cmake --build . --target install --config Release
-        
-        cd ../..
-        dir td/tdlib
+
+    - name: Verify tdlib directory
+      shell: pwsh
+      run: dir td/tdlib
 
     - name: Upload Artifacts
       uses: actions/upload-artifact@v4
@@ -64,4 +75,3 @@ jobs:
         name: tdlib-release-windows-x64
         path: td/tdlib/
         if-no-files-found: error
-
