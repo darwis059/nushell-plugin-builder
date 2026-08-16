@@ -7,33 +7,60 @@ jobs:
   build:
     runs-on: windows-latest
     steps:
-      - name: Checkout tdlib repository
-        uses: actions/checkout@v5
-        with:
-          repository: tdlib/td
-          path: td
-          # If you want a specific tag/commit, you can add it here:
-          # ref: 'v1.8.0' 
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Checkout TDLib
+      uses: actions/checkout@v4
+      with:
+        repository: tdlib/td
+        path: td
+        # Optional: Specify a branch/tag/commit if you need a specific version
+        # ref: v1.8.0 
 
-      - name: Install gperf
-        run: choco install gperf
+    # STREAMING_CHUNK:Setting up caching for vcpkg to drastically speed up future builds...
+    - name: Cache vcpkg dependencies
+      uses: actions/cache@v4
+      id: vcpkg-cache
+      with:
+        path: |
+          C:\vcpkg\packages
+          C:\vcpkg\installed
+        key: ${{ runner.os }}-vcpkg-${{ hashFiles('td/CMakeLists.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-vcpkg-
 
-      - name: Configure CMake
-        run: |
-          cd td
-          mkdir build
-          cd build
-          cmake -A x64 -DCMAKE_INSTALL_PREFIX:PATH=../../tdlib -DCMAKE_BUILD_TYPE=Release ..
+    # STREAMING_CHUNK:Installing necessary C++ dependencies (zlib, openssl, gperf) using vcpkg...
+    - name: Install dependencies via vcpkg
+      run: |
+        # Using the vcpkg installation provided by the GitHub Actions runner environment
+        vcpkg install gperf:x64-windows openssl:x64-windows zlib:x64-windows
+      shell: cmd
 
-      - name: Build TDLib
-        run: |
-          cd td/build
-          cmake --build . --target install --config Release
+    # STREAMING_CHUNK:Configuring the build with CMake, linking the vcpkg toolchain...
+    - name: Configure CMake
+      run: |
+        cd td
+        mkdir build
+        cd build
+        # The key to fixing "Can't find zlib": passing the vcpkg toolchain file to CMake
+        cmake -A x64 -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake ..
 
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: tdlib-windows-x64
-          path: tdlib/
-          # Optional: You can specify how long to keep the artifact
-          # retention-days: 7 
+    # STREAMING_CHUNK:Compiling TDLib...
+    - name: Build TDLib
+      run: |
+        cd td/build
+        cmake --build . --config Release
+
+    # STREAMING_CHUNK:Uploading the compiled binaries as workflow artifacts...
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: tdlib-release-windows-x64
+        path: |
+          td/build/Release/*.dll
+          td/build/Release/*.lib
+          td/build/Release/*.exe
+        # Also include any generated libraries at the root of the build dir, depending on tdlib structure
+        # path: td/build/**/*.dll
+        if-no-files-found: warn
