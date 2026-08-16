@@ -19,14 +19,14 @@ jobs:
       shell: pwsh
       run: |
         git clone https://github.com/tdlib/td.git
-        
-    - name: Clone vcpkg and checkout specific commit
+
+    - name: Clone vcpkg
       shell: pwsh
       run: |
         cd td
         git clone https://github.com/Microsoft/vcpkg.git
-        cd vcpkg
-        git checkout bc3512a509f9d29b37346a7e7e929f9a26e66c7e
+        # Intentionally leaving out the old git checkout commit
+        # Using master branch prevents MSYS2 404 download errors
 
     - name: Cache vcpkg dependencies
       uses: actions/cache@v4
@@ -36,16 +36,18 @@ jobs:
           td/vcpkg/installed
           td/vcpkg/packages
           td/vcpkg/downloads
-        key: ${{ runner.os }}-vcpkg-bc3512a509f9d29b37346a7e7e929f9a26e66c7e
+        key: ${{ runner.os }}-vcpkg-master-static-v1
         restore-keys: |
-          ${{ runner.os }}-vcpkg-
+          ${{ runner.os }}-vcpkg-master-static-
 
     - name: Build and Install dependencies (vcpkg)
       shell: pwsh
+      env:
+        VCPKG_DEFAULT_TRIPLET: x64-windows-static
       run: |
         cd td/vcpkg
         ./bootstrap-vcpkg.bat
-        ./vcpkg.exe install gperf:x64-windows openssl:x64-windows zlib:x64-windows
+        ./vcpkg.exe install gperf openssl zlib
 
     - name: Build and Install TDLib
       shell: pwsh
@@ -55,12 +57,12 @@ jobs:
         mkdir build
         cd build
         
-        # Configure CMake with explicit vcpkg triplet and zlib root to prevent linker errors
+        # Force static linking for both vcpkg and MSVC runtime to prevent linker errors
         cmake -A x64 `
           -DCMAKE_INSTALL_PREFIX:PATH=../tdlib `
           -DCMAKE_TOOLCHAIN_FILE:FILEPATH=../vcpkg/scripts/buildsystems/vcpkg.cmake `
-          -DVCPKG_TARGET_TRIPLET=x64-windows `
-          -DZLIB_ROOT=../vcpkg/installed/x64-windows `
+          -DVCPKG_TARGET_TRIPLET=x64-windows-static `
+          -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded `
           ..
           
         cmake --build . --target install --config Release
