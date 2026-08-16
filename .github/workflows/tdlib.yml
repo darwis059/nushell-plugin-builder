@@ -15,6 +15,15 @@ jobs:
       with:
         php-version: '8.3'
 
+    - name: Clone TDLib and vcpkg repositories
+      shell: pwsh
+      run: |
+        git clone https://github.com/tdlib/td.git
+        cd td
+        git clone https://github.com/Microsoft/vcpkg.git
+        cd vcpkg
+        git checkout bc3512a509f9d29b37346a7e7e929f9a26e66c7e
+
     - name: Cache vcpkg dependencies
       uses: actions/cache@v4
       id: vcpkg-cache
@@ -30,28 +39,23 @@ jobs:
     - name: Build and Install TDLib
       shell: pwsh
       run: |
-        git clone https://github.com/tdlib/td.git
-        cd td
-        
-        # Force vcpkg to build static libraries to avoid linking issues
-        $env:VCPKG_DEFAULT_TRIPLET="x64-windows-static"
-        
-        git clone https://github.com/Microsoft/vcpkg.git
-        cd vcpkg
-        git checkout bc3512a509f9d29b37346a7e7e929f9a26e66c7e
+        # Move into vcpkg and install dependencies
+        cd td/vcpkg
         ./bootstrap-vcpkg.bat
-        ./vcpkg.exe install gperf openssl zlib
+        ./vcpkg.exe install gperf:x64-windows openssl:x64-windows zlib:x64-windows
+        
+        # Move back to td directory
         cd ..
         
         Remove-Item build -Force -Recurse -ErrorAction SilentlyContinue
         mkdir build
         cd build
         
-        # Pass the static triplet to CMake as well
-        cmake -A x64 -DCMAKE_INSTALL_PREFIX:PATH=../tdlib -DCMAKE_TOOLCHAIN_FILE:FILEPATH=../vcpkg/scripts/buildsystems/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=x64-windows-static ..
+        # Configure and build
+        cmake -A x64 -DCMAKE_INSTALL_PREFIX:PATH=../tdlib -DCMAKE_TOOLCHAIN_FILE:FILEPATH=../vcpkg/scripts/buildsystems/vcpkg.cmake ..
         cmake --build . --target install --config Release
-        cd ..
-        cd ..
+        
+        cd ../..
         dir td/tdlib
 
     - name: Upload Artifacts
