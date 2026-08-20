@@ -218,19 +218,19 @@ def main [repository: string plugin_ver: string do_patch: bool] {
         ]
     }
 
-    if $repository == 'lizclipse/nu_plugin_ulid' {
-        patch-file-line --file_path  'src\plugin.rs' [
-            { line: 56, text: '                       Type::Record(vec![' },
-            { line: 59, text: '                     ].into()),' },
-            { line: 63, text: '                       Type::Record(vec![' },
-            { line: 66, text: '                     ].into()),' },
-            { line: 70, text: '                     Type::Record(vec![(K_RND.into(), Type::String)].into()),' },
-            { line: 74, text: '                     Type::Record(vec![(K_RND.into(), Type::String)].into()),' },
-            { line: 78, text: '                     Type::Record(vec![(K_RND.into(), Type::Int)].into()),' },
-            { line: 244, text: '                       Type::Record(vec![' },
-            { line: 247, text: '                     ].into()),' }
-        ]
-    }
+    #if $repository == 'lizclipse/nu_plugin_ulid' {
+    #    patch-file-line --file_path  'src\plugin.rs' [
+    #        { line: 56, text: '                       Type::Record(vec![' },
+    #        { line: 59, text: '                     ].into()),' },
+    #        { line: 63, text: '                       Type::Record(vec![' },
+    #        { line: 66, text: '                     ].into()),' },
+    #        { line: 70, text: '                     Type::Record(vec![(K_RND.into(), Type::String)].into()),' },
+    #        { line: 74, text: '                     Type::Record(vec![(K_RND.into(), Type::String)].into()),' },
+    #        { line: 78, text: '                     Type::Record(vec![(K_RND.into(), Type::Int)].into()),' },
+    #        { line: 244, text: '                       Type::Record(vec![' },
+    #        { line: 247, text: '                     ].into()),' }
+    #    ]
+    #}
     
     if $repository == 'yybit/nu_plugin_x509' {
         patch-file-line --file_path  'src\gen.rs' [
