@@ -102,11 +102,10 @@ def main [repository: string plugin_ver: string do_patch: bool] {
         cargo update
     }
     if $repository == 'windtail/nu_plugin_unzip' {
-        open Cargo.toml | upsert dependencies.windows-sys '0.61.2' | save -f Cargo.toml
-        cargo update
-        open src\lib.rs | lines |
-            update 157 "                    Type::Table(vec![" |
-            update 161 "                    ].into())," | str join (char nl) | save -f src\lib.rs
+        patch-file-line --file_path 'src/lib.rs' [
+            { line: 158, text: '                    Type::Table(vec![' },
+            { line: 162, text: '                    ].into()),' }
+        ]
     }
 
     if $repository == 'alex-kattathra-johnson/nu_plugin_ws' {
