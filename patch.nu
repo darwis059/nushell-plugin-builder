@@ -109,8 +109,10 @@ def main [repository: string plugin_ver: string do_patch: bool] {
     }
 
     if $repository == 'alex-kattathra-johnson/nu_plugin_ws' {
-        open Cargo.toml | upsert dependencies.windows-sys '0.61.2' | save -f Cargo.toml
-        cargo update
+        patch-file-line --file_path 'src/lib.rs' [
+            { line: 141, text: '                                val.into_owned()' }
+        ]
+
     }
     if $repository == 'punund/nu_plugin_socket' {
         patch-file-line --file_path  'src\listen.rs' [
