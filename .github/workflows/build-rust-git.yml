@@ -102,6 +102,13 @@ jobs:
 
       # # - name: Setup tmate session
       # #   uses: mxschmitt/action-tmate@v3
+      - name: Upload binary
+        uses: actions/upload-artifact@v2.3.1
+        with:
+          name: ${{ github.event.inputs.exe_name }}
+          path: target/x86_64-pc-windows-msvc/release/*.exe
+          retention-days: 3
+          
       - name: Setup Rclone
         uses: AnimMouse/setup-rclone@v1
         with:
@@ -120,9 +127,4 @@ jobs:
           # token: ${{ secrets.TELEGRAM_TOKEN }}
           # message: Build Complete ${{github.event.inputs.exe_name}}
           #
-      # - name: Upload binary
-      #   uses: actions/upload-artifact@v2.3.1
-      #   with:
-      #     name: ${{ github.event.inputs.exe_name }}
-      #     path: target/x86_64-pc-windows-msvc/release/${{ github.event.inputs.exe_name }}.exe
-      #     retention-days: 3
+
