@@ -175,12 +175,6 @@ def main [repository: string plugin_ver: string do_patch: bool] {
             str join (char nl) | save -f src\command.rs
     }
 
-    if $repository == 'x_dam4rus/nu_plugin_nuts' {
-        open src\commands\kv\delete.rs | lines |
-            update 127 "                })?" |
-            str join (char nl) | save -f src\commands\kv\delete.rs
-    }
-
     if $repository == 'nushell-works/nu_plugin_secret' {
         #patch-file-line --file_path 'src\secret_types\operations.rs' [
         #    { line: 50, text: '        _ => Err(ShellError::Generic {' },
