@@ -122,9 +122,22 @@ def main [repository: string plugin_ver: string do_patch: bool] {
         cargo update
     }
     if $repository == 'punund/nu_plugin_socket' {
-        open src/connect.rs | lines |
-            update 189 "path_columns: Vec::new(),});" |
-            str join (char nl) | save -f src/connect.rs
+        patch-file-line --file_path  'src\listen.rs' [
+            { line: 125, text: '         .map_err(|e| ShellError::Generic {' },
+            { line: 133, text: '     let bytes_read = stream.read(&mut request_bytes).map_err(|e| ShellError::Generic {' },
+            { line: 155, text: '         other => return Err(ShellError::GenericError {' },
+            { line: 165, text: '         ShellError::GenericError {' },
+            { line: 1, text: '' },
+            { line: 1, text: '' },
+            { line: 1, text: '' },
+            { line: 1, text: '' },
+        ]
+        patch-file-line --file_path  'src\connect.rs' [
+            { line: 87, text: '            Value::Binary { val, .. } => val.to_vec(),' },
+            { line: 154, text: '         Value::Binary { val, .. } => val.to_vec(),' },
+            { line: 1, text: '' },
+            { line: 1, text: '' },
+        ]
     }
 #    if $repository == 'Elsie19/nu_plugin_nutext' {
 #        open src/commands/register.rs | lines | 
@@ -217,20 +230,6 @@ def main [repository: string plugin_ver: string do_patch: bool] {
             { line: 29, text: '                    Type::record(),' }
         ]
     }
-
-    #if $repository == 'lizclipse/nu_plugin_ulid' {
-    #    patch-file-line --file_path  'src\plugin.rs' [
-    #        { line: 56, text: '                       Type::Record(vec![' },
-    #        { line: 59, text: '                     ].into()),' },
-    #        { line: 63, text: '                       Type::Record(vec![' },
-    #        { line: 66, text: '                     ].into()),' },
-    #        { line: 70, text: '                     Type::Record(vec![(K_RND.into(), Type::String)].into()),' },
-    #        { line: 74, text: '                     Type::Record(vec![(K_RND.into(), Type::String)].into()),' },
-    #        { line: 78, text: '                     Type::Record(vec![(K_RND.into(), Type::Int)].into()),' },
-    #        { line: 244, text: '                       Type::Record(vec![' },
-    #        { line: 247, text: '                     ].into()),' }
-    #    ]
-    #}
     
     if $repository == 'yybit/nu_plugin_x509' {
         patch-file-line --file_path  'src\gen.rs' [
