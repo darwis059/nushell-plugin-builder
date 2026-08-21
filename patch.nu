@@ -123,10 +123,10 @@ def main [repository: string plugin_ver: string do_patch: bool] {
     }
     if $repository == 'punund/nu_plugin_socket' {
         patch-file-line --file_path  'src\listen.rs' [
-            { line: 125, text: '         .map_err(|e| ShellError::Generic {' },
-            { line: 133, text: '     let bytes_read = stream.read(&mut request_bytes).map_err(|e| ShellError::Generic {' },
-            { line: 155, text: '         other => return Err(ShellError::GenericError {' },
-            { line: 165, text: '         ShellError::GenericError {' },
+            # { line: 125, text: '         .map_err(|e| ShellError::Generic {' },
+            # { line: 133, text: '     let bytes_read = stream.read(&mut request_bytes).map_err(|e| ShellError::Generic {' },
+            # { line: 155, text: '         other => return Err(ShellError::Generic {' },
+            # { line: 165, text: '         ShellError::Generic {' },
             { line: 154, text: '         Value::Binary { val, .. } => val.to_vec(),' },
         ]
         patch-file-line --file_path  'src\connect.rs' [
