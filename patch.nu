@@ -123,14 +123,37 @@ def main [repository: string plugin_ver: string do_patch: bool] {
     }
     if $repository == 'punund/nu_plugin_socket' {
         patch-file-line --file_path  'src\listen.rs' [
-            # { line: 125, text: '         .map_err(|e| ShellError::Generic {' },
-            # { line: 133, text: '     let bytes_read = stream.read(&mut request_bytes).map_err(|e| ShellError::Generic {' },
-            # { line: 155, text: '         other => return Err(ShellError::Generic {' },
-            # { line: 165, text: '         ShellError::Generic {' },
-            { line: 154, text: '         Value::Binary { val, .. } => val.to_vec(),' },
+            { line: 125, text: '        .map_err(|e| nu_protocol::LabeledError::new("Failed to set read timeout")' },
+            { line: 126, text: '            .with_help(e.to_string())' },
+            { line: 127, text: '            .with_label("here", head)' },
+            { line: 128, text: '        )?;' },
+            { line: 129, text: '' },
+            { line: 130, text: '' },
+            { line: 131, text: '' },
+            { line: 133, text: '    let bytes_read = stream.read(&mut request_bytes).map_err(|e| nu_protocol::LabeledError::new("Failed to read from socket")' },
+            { line: 134, text: '        .with_help(format!("This can happen if the client disconnects or the read times out. {}", e))' },
+            { line: 135, text: '        .with_label("here", head)' },
+            { line: 136, text: '    )?;' },
+            { line: 154, text: '        Value::Binary { val, .. } => val.to_vec(),' },
+            { line: 155, text: '        other => return Err(nu_protocol::LabeledError::new("Unsupported closure output")' },
+            { line: 156, text: '            .with_help("The closure for `socket listen` must return a string or binary value.")' },
+            { line: 157, text: '            .with_label(format!("Expected string or binary from closure, but got {}.", other.get_type()), head)' },
+            { line: 158, text: '            .into())' },
+            { line: 159, text: '' },
+            { line: 160, text: '' },
+            { line: 161, text: '' },
+
+            { line: 165, text: '        nu_protocol::LabeledError::new("Failed to write to socket")' },
+            { line: 166, text: '            .with_help(e.to_string())' },
+            { line: 167, text: '            .with_label("here", head)' },
+            { line: 168, text: '' },
+            { line: 169, text: '' },
+            { line: 170, text: '' },
+            { line: 171, text: '' },
         ]
         patch-file-line --file_path  'src\connect.rs' [
             { line: 87, text: '            Value::Binary { val, .. } => val.to_vec(),' },
+            { line: 190, text: '                path_columns: vec![],});' },
         ]
     }
 #    if $repository == 'Elsie19/nu_plugin_nutext' {
