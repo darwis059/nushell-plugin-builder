@@ -124,7 +124,6 @@ def main [repository: string plugin_ver: string do_patch: bool] {
             { line: 159, text: '' },
             { line: 160, text: '' },
             { line: 161, text: '' },
-
             { line: 165, text: '        nu_protocol::LabeledError::new("Failed to write to socket")' },
             { line: 166, text: '            .with_help(e.to_string())' },
             { line: 167, text: '            .with_label("here", head)' },
@@ -136,6 +135,12 @@ def main [repository: string plugin_ver: string do_patch: bool] {
         patch-file-line --file_path  'src\connect.rs' [
             { line: 87, text: '            Value::Binary { val, .. } => val.to_vec(),' },
             { line: 190, text: '                path_columns: vec![],});' },
+        ]
+    }
+
+    if $repository == 'dead10ck/nu_plugin_dns' {
+        patch-file-line --file_path  'src\dns\serde.rs' [
+            { line: 332, text: '                            Value::Binary { val: bin_val, .. } => Ok(bin_val.to_vec()),' },
         ]
     }
 
@@ -160,9 +165,18 @@ def main [repository: string plugin_ver: string do_patch: bool] {
         open Cargo.toml | upsert dependencies.windows-sys '0.61.2' | save -f Cargo.toml
         cargo update
     }
-    if $repository == 'x_nushell-works/nu_plugin_nw_ulid' {
-        open Cargo.toml | upsert dependencies.windows-sys '0.61.2' | save -f Cargo.toml
-        cargo update
+    if $repository == 'nushell-works/nu_plugin_nw_ulid' {
+        # open Cargo.toml | upsert dependencies.windows-sys '0.61.2' | save -f Cargo.toml
+        # cargo update
+        patch-file-line --file_path  'src\commands\encode.rs' [
+            { line: 64, text: '                Value::Binary { val, .. } => val.into_owned(),' },
+            { line: 74, text: '                PipelineData::Value(Value::Binary { val, .. }, _) => val.into_owned(),' },
+            { line: 216, text: '                Value::Binary { val, .. } => val.into_owned(),' },
+            { line: 226, text: '                PipelineData::Value(Value::Binary { val, .. }, _) => val.into_owned(),' },
+        ]
+        patch-file-line --file_path  'src\commands\sort.rs' [
+            { line: 102, text: '                let mut sorted_vals = vals.into_owned();' },
+        ]
     }    
     if $repository == 'eggcaker/nu_plugin_to_xlsx' {
         open Cargo.toml | upsert dependencies.windows-sys '0.61.2' | save -f Cargo.toml
