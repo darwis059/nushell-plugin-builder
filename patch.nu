@@ -172,12 +172,14 @@ def main [repository: string plugin_ver: string do_patch: bool] {
 #            str join (char nl) | save -f src/commands/stringret.rs
 #    }
     if $repository == 'dam4rus/nu_plugin_nuts' {
-        open Cargo.toml | upsert dependencies.windows-sys '0.61.2' | upsert dependencies.nu-utils '0.114.0' | save -f Cargo.toml
-        cargo update
+        # open Cargo.toml | upsert dependencies.windows-sys '0.61.2' | upsert dependencies.nu-utils '0.114.0' | save -f Cargo.toml
+        # cargo update
 
         patch-file-line --file_path  'src\commands\publish.rs' [
-            { line: 28, text: '           vec![' },
-            { line: 35, text: '           vec![' }
+            { line: 29, text: '                ("headers", Type::record()),' },
+            { line: 30, text: '                ("payload", Type::String),' },
+            { line: 36, text: '                ("headers", Type::record()),' },
+            { line: 37, text: '                ("payload", Type::Binary),' }
         ]
     }
 
