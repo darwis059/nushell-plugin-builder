@@ -127,16 +127,12 @@ def main [repository: string plugin_ver: string do_patch: bool] {
             { line: 133, text: '     let bytes_read = stream.read(&mut request_bytes).map_err(|e| ShellError::Generic {' },
             { line: 155, text: '         other => return Err(ShellError::GenericError {' },
             { line: 165, text: '         ShellError::GenericError {' },
-            { line: 1, text: '' },
-            { line: 1, text: '' },
-            { line: 1, text: '' },
-            { line: 1, text: '' },
+            
         ]
         patch-file-line --file_path  'src\connect.rs' [
             { line: 87, text: '            Value::Binary { val, .. } => val.to_vec(),' },
             { line: 154, text: '         Value::Binary { val, .. } => val.to_vec(),' },
-            { line: 1, text: '' },
-            { line: 1, text: '' },
+            
         ]
     }
 #    if $repository == 'Elsie19/nu_plugin_nutext' {
