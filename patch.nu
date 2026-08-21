@@ -202,47 +202,79 @@ def main [repository: string plugin_ver: string do_patch: bool] {
         ]
 
         patch-file-line --file_path 'src/commands/config_import.rs' [
-                    { line: 98, text: '            .input_output_types(vec![(Type::Nothing, Type::record())])' }
-                ]
+            { line: 98, text: '            .input_output_types(vec![(Type::Nothing, Type::record())])' }
+        ]
 
         patch-file-line --file_path 'src/commands/config_reset.rs' [
-                    { line: 86, text: '            .input_output_types(vec![(Type::Nothing, Type::record())])' }
-                ]
+            { line: 86, text: '            .input_output_types(vec![(Type::Nothing, Type::record())])' }
+        ]
 
         patch-file-line --file_path 'src/commands/config_show.rs' [
-                    { line: 91, text: '            .input_output_types(vec![(Type::Nothing, Type::record())])' }
-                ]
+            { line: 91, text: '            .input_output_types(vec![(Type::Nothing, Type::record())])' }
+        ]
 
         patch-file-line --file_path 'src/commands/config_validate.rs' [
-                    { line: 181, text: '            .input_output_types(vec![(Type::Nothing, Type::record())])' },
-                    { line: 628, text: '            .contains(&(Type::Nothing, Type::record())));' }
-                ]
+            { line: 181, text: '            .input_output_types(vec![(Type::Nothing, Type::record())])' },
+            { line: 628, text: '            .contains(&(Type::Nothing, Type::record())));' }
+        ]
 
         patch-file-line --file_path 'src/commands/configure.rs' [
-                    { line: 105, text: '            .input_output_types(vec![(Type::Nothing, Type::record())])' }
-                ]
+            { line: 105, text: '            .input_output_types(vec![(Type::Nothing, Type::record())])' }
+        ]
 
         patch-file-line --file_path 'src/commands/contains.rs' [
-                    { line: 87, text: '                let search_value_list = Value::list(search_list.to_vec(), span);' }
-                ]
+            { line: 87, text: '                let search_value_list = Value::list(search_list.to_vec(), span);' }
+        ]
 
         patch-file-line --file_path 'src/commands/info.rs' [
-                    { line: 18, text: '            .input_output_types(vec![(Type::Nothing, Type::record())])' }
-                ]
+            { line: 18, text: '            .input_output_types(vec![(Type::Nothing, Type::record())])' }
+        ]
 
         patch-file-line --file_path 'src/commands/unwrap.rs' [
-                    { line: 29, text: '                    Type::record(),' }
-                ]
+            { line: 29, text: '                    Type::record(),' }
+        ]
 
         patch-file-line --file_path 'src/commands/wrap.rs' [
-                    { line: 123, text: '                        let secret = SecretBinary::new(val.to_vec());' },
-                    { line: 127, text: '                        let secret = SecretList::new(vals.to_vec());' }
-                ]
+            { line: 123, text: '                        let secret = SecretBinary::new(val.to_vec());' },
+            { line: 127, text: '                        let secret = SecretList::new(vals.to_vec());' }
+        ]
 
         patch-file-line --file_path 'src/commands/wrap_with.rs' [
-                    { line: 112, text: '                        let secret = SecretBinary::new_with_template(val.to_vec(), template);' },
-                    { line: 116, text: '                        let secret = SecretList::new_with_template(vals.to_vec(), template);' }
-                ]
+            { line: 112, text: '                        let secret = SecretBinary::new_with_template(val.to_vec(), template);' },
+            { line: 116, text: '                        let secret = SecretList::new_with_template(vals.to_vec(), template);' }
+        ]
+
+        patch-file-line --file_path 'src/secret_types/operations.rs' [
+            { line: 50, text: '        _ => Err(ShellError::Generic(' },
+            { line: 51, text: '            nu_protocol::shell_error::generic::GenericError::new(' },
+            { line: 52, text: '                format!("Operator {operator:?} is not supported for {type_name}"),' },
+            { line: 53, text: '                "",' },
+            { line: 54, text: '                op,' },
+            { line: 55, text: '            )' },
+            { line: 56, text: '        )),' },
+            { line: 84, text: '            return Err(ShellError::Generic(' },
+            { line: 85, text: '                nu_protocol::shell_error::generic::GenericError::new(' },
+            { line: 86, text: '                    format!("Operator {operator:?} is not supported for {type_name}"),' },
+            { line: 87, text: '                    "",' },
+            { line: 88, text: '                    op,' },
+            { line: 89, text: '                )' },
+            { line: 90, text: '            ));' },
+            { line: 101, text: '        return Err(ShellError::Generic(' },
+            { line: 102, text: '            nu_protocol::shell_error::generic::GenericError::new(' },
+            { line: 103, text: '                format!("Ordering comparison requires two {type_name} values"),' },
+            { line: 104, text: '                "right-hand side is not the same secret type",' },
+            { line: 105, text: '                op,' },
+            { line: 106, text: '            )' },
+            { line: 107, text: '        ));' },
+            { line: 112, text: '        .ok_or_else(|| ShellError::Generic(' },
+            { line: 113, text: '            nu_protocol::shell_error::generic::GenericError::new(' },
+            { line: 114, text: '                format!("Values are not orderable for {type_name}"),' },
+            { line: 115, text: '                "comparison is undefined (e.g., NaN)",' },
+            { line: 116, text: '                op,' },
+            { line: 117, text: '            )' },
+            { line: 118, text: '        ))?;' }
+        ]
+
 
     }
     
