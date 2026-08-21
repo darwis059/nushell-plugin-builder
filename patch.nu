@@ -197,30 +197,53 @@ def main [repository: string plugin_ver: string do_patch: bool] {
         #    { line: 112, text: '         .ok_or_else(|| ShellError::Generic {' }
         #]
         # patch-file 'src\secret_types\operations.rs' 'ShellError::GenericError' 'ShellError::Generic '
-        patch-file-line --file_path 'src\commands\config_export.rs' [
-            { line: 67, text: '             .input_output_types(vec![(Type::Nothing, Type::record())])' }
+        patch-file-line --file_path 'src/commands/config_export.rs' [
+            { line: 67, text: '            .input_output_types(vec![(Type::Nothing, Type::record())])' }
         ]
-        patch-file-line --file_path 'src\commands\config_import.rs' [
-            { line: 98, text: '             .input_output_types(vec![(Type::Nothing, Type::record())])' }
-        ]
-        patch-file-line --file_path 'src\commands\config_reset.rs' [
-            { line: 86, text: '             .input_output_types(vec![(Type::Nothing, Type::record())])' }
-        ]
-        patch-file-line --file_path 'src\commands\config_show.rs' [
-            { line: 91, text: '             .input_output_types(vec![(Type::Nothing, Type::record())])' }
-        ]
-        patch-file-line --file_path 'src\commands\config_validate.rs' [
-            { line: 181, text: '             .input_output_types(vec![(Type::Nothing, Type::record())])' }
-        ]
-        patch-file-line --file_path 'src\commands\configure.rs' [
-            { line: 105, text: '             .input_output_types(vec![(Type::Nothing, Type::record())])' }
-        ]
-        patch-file-line --file_path 'src\commands\info.rs' [
-            { line: 18, text: '             .input_output_types(vec![(Type::Nothing, Type::record())])' }
-        ]
-        patch-file-line --file_path 'src\commands\unwrap.rs' [
-            { line: 29, text: '                    Type::record(),' }
-        ]
+
+        patch-file-line --file_path 'src/commands/config_import.rs' [
+                    { line: 98, text: '            .input_output_types(vec![(Type::Nothing, Type::record())])' }
+                ]
+
+        patch-file-line --file_path 'src/commands/config_reset.rs' [
+                    { line: 86, text: '            .input_output_types(vec![(Type::Nothing, Type::record())])' }
+                ]
+
+        patch-file-line --file_path 'src/commands/config_show.rs' [
+                    { line: 91, text: '            .input_output_types(vec![(Type::Nothing, Type::record())])' }
+                ]
+
+        patch-file-line --file_path 'src/commands/config_validate.rs' [
+                    { line: 181, text: '            .input_output_types(vec![(Type::Nothing, Type::record())])' },
+                    { line: 628, text: '            .contains(&(Type::Nothing, Type::record())));' }
+                ]
+
+        patch-file-line --file_path 'src/commands/configure.rs' [
+                    { line: 105, text: '            .input_output_types(vec![(Type::Nothing, Type::record())])' }
+                ]
+
+        patch-file-line --file_path 'src/commands/contains.rs' [
+                    { line: 87, text: '                let search_value_list = Value::list(search_list.to_vec(), span);' }
+                ]
+
+        patch-file-line --file_path 'src/commands/info.rs' [
+                    { line: 18, text: '            .input_output_types(vec![(Type::Nothing, Type::record())])' }
+                ]
+
+        patch-file-line --file_path 'src/commands/unwrap.rs' [
+                    { line: 29, text: '                    Type::record(),' }
+                ]
+
+        patch-file-line --file_path 'src/commands/wrap.rs' [
+                    { line: 123, text: '                        let secret = SecretBinary::new(val.to_vec());' },
+                    { line: 127, text: '                        let secret = SecretList::new(vals.to_vec());' }
+                ]
+
+        patch-file-line --file_path 'src/commands/wrap_with.rs' [
+                    { line: 112, text: '                        let secret = SecretBinary::new_with_template(val.to_vec(), template);' },
+                    { line: 116, text: '                        let secret = SecretList::new_with_template(vals.to_vec(), template);' }
+                ]
+
     }
     
     if $repository == 'yybit/nu_plugin_x509' {
