@@ -61,7 +61,7 @@ def main [repository: string plugin_ver: string do_patch: bool] {
         ]
 
         patch-file-line --file_path 'src/commands/serve.rs' [
-            { line: 22, text: `    fn examples(&self) -> Vec<Example<\'_>> {` }
+            { line: 22, text: `    fn examples(&self) -> Vec<Example<'_>> {` }
         ]
 
         patch-file-line --file_path 'src/router/server.rs' [
