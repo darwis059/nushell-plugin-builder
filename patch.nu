@@ -51,15 +51,25 @@ def main [repository: string plugin_ver: string do_patch: bool] {
     }
 
     if $repository == 'Com6235/nu-plugin-http-server' {
-        open src/commands/mod.rs | lines |
-            update 26 '        Value::String { val, internal_span: _, .. } => (val.as_bytes().to_vec(), parse_pipeline_mime(meta, "text/plain")),' |
-            update 27 '         Value::Nothing { internal_span: _ , .. } => (vec![], String::from("text/plain")),' |
-            update 28 '         Value::Bool { val, internal_span: _ , .. } => ((if val { "true" } else { "false" }).as_bytes().to_vec(), parse_pipeline_mime(meta, "text/plain")),' |
-            update 29 '         Value::Binary { val, internal_span: _ , .. } => (val, parse_pipeline_mime(meta, "application/octet-stream")),' |
-            update 40 '         Value::Binary { val, internal_span: _ , .. } => Ok((val, parse_pipeline_mime(meta, "application/octet-stream"))),' |
-            update 41 '         Value::String { val, internal_span: _ , .. } => Ok((val.as_bytes().to_vec(), parse_pipeline_mime(meta, "text/plain"))),' |
-            str join (char nl) | save -f src/commands/mod.rs
-        
+        patch-file-line --file_path 'src/commands/mod.rs' [
+            { line: 27, text: '        Value::String { val, internal_span: _, .. } => (val.as_bytes().to_vec(), parse_pipeline_mime(meta, "text/plain")),' },
+            { line: 28, text: '        Value::Nothing { internal_span: _, .. } => (vec![], String::from("text/plain")),' },
+            { line: 29, text: '        Value::Bool { val, internal_span: _, .. } => ((if val { "true" } else { "false" }).as_bytes().to_vec(), parse_pipeline_mime(meta, "text/plain")),' },
+            { line: 30, text: '        Value::Binary { val, internal_span: _, .. } => (val.into_owned(), parse_pipeline_mime(meta, "application/octet-stream")),' },
+            { line: 41, text: '        Value::Binary { val, internal_span: _, .. } => Ok((val.into_owned(), parse_pipeline_mime(meta, "application/octet-stream"))),' },
+            { line: 42, text: '        Value::String { val, internal_span: _, .. } => Ok((val.as_bytes().to_vec(), parse_pipeline_mime(meta, "text/plain"))),' }
+        ]
+
+        patch-file-line --file_path 'src/commands/serve.rs' [
+            { line: 22, text: `    fn examples(&self) -> Vec<Example<\'_>> {` }
+        ]
+
+        patch-file-line --file_path 'src/router/server.rs' [
+            { line: 36, text: '' },
+            { line: 37, text: '' },
+            { line: 38, text: '' }
+        ]
+
         nu toolbox.nu
     }
 
