@@ -15,7 +15,9 @@ def main [repository: string plugin_ver: string do_patch: bool] {
         cd 'nu-plugin-ipscan'
     }
 
-    if $do_patch == true {
+    let is_not_workspaces = open Cargo.toml | get workspace | is-empty 
+
+    if ($do_patch == true and $is_not_workspaces) {
         open Cargo.toml | 
             update dependencies.nu-plugin $plugin_ver | 
             update dependencies.nu-protocol { version: $plugin_ver features: ['plugin'] } | 
@@ -24,6 +26,16 @@ def main [repository: string plugin_ver: string do_patch: bool] {
             if 'nu-plugin-test-support' in ($in | get -o dev-dependencies | default {}) { $in | update dev-dependencies.nu-plugin-test-support $plugin_ver } else { $in } | 
             if 'nu-cmd-lang' in ($in | get -o dev-dependencies | default {}) { $in | update dev-dependencies.nu-cmd-lang $plugin_ver } else { $in } | 
             if 'nu-cmd-base' in ($in | get dependencies) { $in | update dependencies.nu-cmd-base $plugin_ver } else { $in } | 
+            save -f Cargo.toml
+    } else {
+        open Cargo.toml | 
+            update workspace.dependencies.nu-plugin $plugin_ver | 
+            update workspace.dependencies.nu-protocol { version: $plugin_ver features: ['plugin'] } | 
+            if 'nuon' in ($in | get workspace.dependencies) { $in | update workspace.dependencies.nuon $plugin_ver } else { $in } | 
+            if 'nu-path' in ($in | get workspace.dependencies) { $in | update workspace.dependencies.nu-path $plugin_ver } else { $in } | 
+            if 'nu-plugin-test-support' in ($in | get -o workspace.dev-dependencies | default {}) { $in | update workspace.dev-dependencies.nu-plugin-test-support $plugin_ver } else { $in } | 
+            if 'nu-cmd-lang' in ($in | get -o workspace.dev-dependencies | default {}) { $in | update workspace.dev-dependencies.nu-cmd-lang $plugin_ver } else { $in } | 
+            if 'nu-cmd-base' in ($in | get workspace.dependencies) { $in | update workspace.dependencies.nu-cmd-base $plugin_ver } else { $in } | 
             save -f Cargo.toml
     }
 
