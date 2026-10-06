@@ -11,9 +11,9 @@ def main [repository: string plugin_ver: string do_patch: bool] {
 
     ls
 
-    if ($repository == 'averyfreeman/nu_plugin_ipscan') {
-        cd 'nu-plugin-ipscan'
-    }
+    # if ($repository == 'averyfreeman/nu_plugin_ipscan') {
+    #     cd 'nu-plugin-ipscan'
+    # }
 
     let is_not_workspaces = open Cargo.toml | get workspace | is-empty 
 
