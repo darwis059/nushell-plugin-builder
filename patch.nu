@@ -11,6 +11,10 @@ def main [repository: string plugin_ver: string do_patch: bool] {
 
     ls
 
+    if ($repository == 'averyfreeman/nu_plugin_ipscan') {
+        cd 'nu_plugin_ipscan'
+    }
+
     if $do_patch == true {
         open Cargo.toml | 
             update dependencies.nu-plugin $plugin_ver | 
