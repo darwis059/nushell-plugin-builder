@@ -184,11 +184,11 @@ def main [repository: string plugin_ver: string do_patch: bool] {
         ]
     }
 
-    if $repository == 'dead10ck/nu_plugin_dns' {
-        patch-file-line --file_path  'src\dns\serde.rs' [
-            { line: 332, text: '                            Value::Binary { val: bin_val, .. } => Ok(bin_val.to_vec()),' },
-        ]
-    }
+    # if $repository == 'dead10ck/nu_plugin_dns' {
+    #     patch-file-line --file_path  'src\dns\serde.rs' [
+    #         { line: 332, text: '                            Value::Binary { val: bin_val, .. } => Ok(bin_val.to_vec()),' },
+    #     ]
+    # }
 
     if $repository == 'dam4rus/nu_plugin_nuts' {
         # open Cargo.toml | upsert dependencies.windows-sys '0.61.2' | upsert dependencies.nu-utils '0.114.0' | save -f Cargo.toml
