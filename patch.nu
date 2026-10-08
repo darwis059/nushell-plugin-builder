@@ -17,10 +17,10 @@ def main [repository: string plugin_ver: string do_patch: bool] {
     # Check workspace status and determine the prefix path
     let cargo = open Cargo.toml
 
-    # Check specifically for workspace dependencies, ignoring metadata-only [workspace] sections
+    # Check specifically for workspace dependencies
     let has_workspace_deps = not ($cargo | get -o workspace.dependencies | is-empty)
 
-    # Set the correct prefixes for dependencies and dev-dependencies
+    # Set the correct prefixes based on whether it's a workspace root or a regular crate
     let dep_prefix = if $has_workspace_deps { "workspace.dependencies." } else { "dependencies." }
     let dev_prefix = if $has_workspace_deps { "workspace.dev-dependencies." } else { "dev-dependencies." }
 
@@ -30,7 +30,7 @@ def main [repository: string plugin_ver: string do_patch: bool] {
         upsert ($dep_prefix + "nuon") $plugin_ver | 
         upsert ($dep_prefix + "nu-path") $plugin_ver | 
         upsert ($dev_prefix + "nu-plugin-test-support") $plugin_ver | 
-        upsert ($dev_prefix + "dev-dependencies.nu-cmd-lang") $plugin_ver | # handles local vs workspace dev-deps safely
+        upsert ($dev_prefix + "nu-cmd-lang") $plugin_ver | 
         upsert ($dep_prefix + "nu-cmd-base") $plugin_ver | 
         save -f Cargo.toml
 
