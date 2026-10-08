@@ -15,7 +15,7 @@ def main [repository: string plugin_ver: string do_patch: bool] {
     #     cd 'nu-plugin-ipscan'
     # }
 
-    let is_not_workspaces = open Cargo.toml | get workspace | is-empty 
+    let is_not_workspaces = open Cargo.toml | get -o workspace | is-empty 
 
     if ($do_patch == true and $is_not_workspaces) {
         open Cargo.toml | 
