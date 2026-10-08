@@ -17,25 +17,23 @@ def main [repository: string plugin_ver: string do_patch: bool] {
     # Check workspace status and determine the prefix path
     let cargo = open Cargo.toml
 
-    # Check specifically for workspace dependencies
+    # Detect workspace dependencies structure
     let has_workspace_deps = not ($cargo | get -o workspace.dependencies | is-empty)
+    let dep_prefix = if $has_workspace_deps { "workspace.dependencies" } else { "dependencies" }
+    let dev_prefix = if $has_workspace_deps { "workspace.dev-dependencies" } else { "dev-dependencies" }
 
-    # Set the correct prefixes based on whether it's a workspace root or a regular crate
-    let dep_prefix = if $has_workspace_deps { "workspace.dependencies." } else { "dependencies." }
-    let dev_prefix = if $has_workspace_deps { "workspace.dev-dependencies." } else { "dev-dependencies." }
-
-    $cargo | 
-        upsert ($dep_prefix + "nu-plugin") $plugin_ver | 
-        upsert ($dep_prefix + "nu-protocol") { version: $plugin_ver, features: ['plugin'] } | 
-        upsert ($dep_prefix + "nuon") $plugin_ver | 
-        upsert ($dep_prefix + "nu-path") $plugin_ver | 
-        upsert ($dev_prefix + "nu-plugin-test-support") $plugin_ver | 
-        upsert ($dev_prefix + "nu-cmd-lang") $plugin_ver | 
-        upsert ($dep_prefix + "nu-cmd-base") $plugin_ver | 
-        save -f Cargo.toml
+    $cargo 
+        | if not ($in | get -o $"($dep_prefix).nu-plugin" | is-empty) { update $"($dep_prefix).nu-plugin" $plugin_ver } else { $in }
+        | if not ($in | get -o $"($dep_prefix).nu-protocol" | is-empty) { update $"($dep_prefix).nu-protocol" { version: $plugin_ver, features: ['plugin'] } } else { $in }
+        | if not ($in | get -o $"($dep_prefix).nuon" | is-empty) { update $"($dep_prefix).nuon" $plugin_ver } else { $in }
+        | if not ($in | get -o $"($dep_prefix).nu-path" | is-empty) { update $"($dep_prefix).nu-path" $plugin_ver } else { $in }
+        | if not ($in | get -o $"($dev_prefix).nu-plugin-test-support" | is-empty) { update $"($dev_prefix).nu-plugin-test-support" $plugin_ver } else { $in }
+        | if not ($in | get -o $"($dev_prefix).nu-cmd-lang" | is-empty) { update $"($dev_prefix).nu-cmd-lang" $plugin_ver } else { $in }
+        | if not ($in | get -o $"($dep_prefix).nu-cmd-base" | is-empty) { update $"($dep_prefix).nu-cmd-base" $plugin_ver } else { $in }
+        | save -f Cargo.toml
 
     print (open Cargo.toml)
-    
+
     # let is_not_workspaces = open Cargo.toml | get -o workspace | is-empty 
 
     # if ($do_patch == true and $is_not_workspaces) {
