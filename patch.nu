@@ -14,30 +14,49 @@ def main [repository: string plugin_ver: string do_patch: bool] {
     # if ($repository == 'averyfreeman/nu_plugin_ipscan') {
     #     cd 'nu-plugin-ipscan'
     # }
+    # Check workspace status and determine the prefix path
+    let cargo = open Cargo.toml
 
-    let is_not_workspaces = open Cargo.toml | get -o workspace | is-empty 
+    # Check specifically for workspace dependencies, ignoring metadata-only [workspace] sections
+    let has_workspace_deps = not ($cargo | get -o workspace.dependencies | is-empty)
 
-    if ($do_patch == true and $is_not_workspaces) {
-        open Cargo.toml | 
-            update dependencies.nu-plugin $plugin_ver | 
-            update dependencies.nu-protocol { version: $plugin_ver features: ['plugin'] } | 
-            if 'nuon' in ($in | get dependencies) { $in | update dependencies.nuon $plugin_ver } else { $in } | 
-            if 'nu-path' in ($in | get dependencies) { $in | update dependencies.nu-path $plugin_ver } else { $in } | 
-            if 'nu-plugin-test-support' in ($in | get -o dev-dependencies | default {}) { $in | update dev-dependencies.nu-plugin-test-support $plugin_ver } else { $in } | 
-            if 'nu-cmd-lang' in ($in | get -o dev-dependencies | default {}) { $in | update dev-dependencies.nu-cmd-lang $plugin_ver } else { $in } | 
-            if 'nu-cmd-base' in ($in | get dependencies) { $in | update dependencies.nu-cmd-base $plugin_ver } else { $in } | 
-            save -f Cargo.toml
-    } else {
-        open Cargo.toml | 
-            update workspace.dependencies.nu-plugin $plugin_ver | 
-            update workspace.dependencies.nu-protocol { version: $plugin_ver features: ['plugin'] } | 
-            if 'nuon' in ($in | get workspace.dependencies) { $in | update workspace.dependencies.nuon $plugin_ver } else { $in } | 
-            if 'nu-path' in ($in | get workspace.dependencies) { $in | update workspace.dependencies.nu-path $plugin_ver } else { $in } | 
-            if 'nu-plugin-test-support' in ($in | get -o workspace.dev-dependencies | default {}) { $in | update workspace.dev-dependencies.nu-plugin-test-support $plugin_ver } else { $in } | 
-            if 'nu-cmd-lang' in ($in | get -o workspace.dev-dependencies | default {}) { $in | update workspace.dev-dependencies.nu-cmd-lang $plugin_ver } else { $in } | 
-            if 'nu-cmd-base' in ($in | get workspace.dependencies) { $in | update workspace.dependencies.nu-cmd-base $plugin_ver } else { $in } | 
-            save -f Cargo.toml
-    }
+    # Set the correct prefixes for dependencies and dev-dependencies
+    let dep_prefix = if $has_workspace_deps { "workspace.dependencies." } else { "dependencies." }
+    let dev_prefix = if $has_workspace_deps { "workspace.dev-dependencies." } else { "dev-dependencies." }
+
+    $cargo | 
+        upsert ($dep_prefix + "nu-plugin") $plugin_ver | 
+        upsert ($dep_prefix + "nu-protocol") { version: $plugin_ver, features: ['plugin'] } | 
+        upsert ($dep_prefix + "nuon") $plugin_ver | 
+        upsert ($dep_prefix + "nu-path") $plugin_ver | 
+        upsert ($dev_prefix + "nu-plugin-test-support") $plugin_ver | 
+        upsert ($dev_prefix + "dev-dependencies.nu-cmd-lang") $plugin_ver | # handles local vs workspace dev-deps safely
+        upsert ($dep_prefix + "nu-cmd-base") $plugin_ver | 
+        save -f Cargo.toml
+
+    # let is_not_workspaces = open Cargo.toml | get -o workspace | is-empty 
+
+    # if ($do_patch == true and $is_not_workspaces) {
+    #     open Cargo.toml | 
+    #         update dependencies.nu-plugin $plugin_ver | 
+    #         update dependencies.nu-protocol { version: $plugin_ver features: ['plugin'] } | 
+    #         if 'nuon' in ($in | get dependencies) { $in | update dependencies.nuon $plugin_ver } else { $in } | 
+    #         if 'nu-path' in ($in | get dependencies) { $in | update dependencies.nu-path $plugin_ver } else { $in } | 
+    #         if 'nu-plugin-test-support' in ($in | get -o dev-dependencies | default {}) { $in | update dev-dependencies.nu-plugin-test-support $plugin_ver } else { $in } | 
+    #         if 'nu-cmd-lang' in ($in | get -o dev-dependencies | default {}) { $in | update dev-dependencies.nu-cmd-lang $plugin_ver } else { $in } | 
+    #         if 'nu-cmd-base' in ($in | get dependencies) { $in | update dependencies.nu-cmd-base $plugin_ver } else { $in } | 
+    #         save -f Cargo.toml
+    # } else {
+    #     open Cargo.toml | 
+    #         update workspace.dependencies.nu-plugin $plugin_ver | 
+    #         update workspace.dependencies.nu-protocol { version: $plugin_ver features: ['plugin'] } | 
+    #         if 'nuon' in ($in | get workspace.dependencies) { $in | update workspace.dependencies.nuon $plugin_ver } else { $in } | 
+    #         if 'nu-path' in ($in | get workspace.dependencies) { $in | update workspace.dependencies.nu-path $plugin_ver } else { $in } | 
+    #         if 'nu-plugin-test-support' in ($in | get -o workspace.dev-dependencies | default {}) { $in | update workspace.dev-dependencies.nu-plugin-test-support $plugin_ver } else { $in } | 
+    #         if 'nu-cmd-lang' in ($in | get -o workspace.dev-dependencies | default {}) { $in | update workspace.dev-dependencies.nu-cmd-lang $plugin_ver } else { $in } | 
+    #         if 'nu-cmd-base' in ($in | get workspace.dependencies) { $in | update workspace.dependencies.nu-cmd-base $plugin_ver } else { $in } | 
+    #         save -f Cargo.toml
+    # }
 
     if $repository == 'FMotalleb/nu_plugin_qr_maker' {
         # patch version
