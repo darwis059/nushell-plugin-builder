@@ -34,6 +34,8 @@ def main [repository: string plugin_ver: string do_patch: bool] {
         upsert ($dep_prefix + "nu-cmd-base") $plugin_ver | 
         save -f Cargo.toml
 
+    print (open Cargo.toml)
+    
     # let is_not_workspaces = open Cargo.toml | get -o workspace | is-empty 
 
     # if ($do_patch == true and $is_not_workspaces) {
