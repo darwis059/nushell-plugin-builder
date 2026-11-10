@@ -372,10 +372,10 @@ def main [repository: string plugin_ver: string do_patch: bool] {
             { line: 13, text: '    #[allow(dead_code)]' }
         ]
 
-        patch-file-line --file_path 'src/extensions.rs' [
-            { line: 50, text: '#[allow(dead_code)]' },
-            { line: 58, text: '#[allow(dead_code)]' }
-        ]
+        # patch-file-line --file_path 'src/extensions.rs' [
+        #     { line: 50, text: '#[allow(dead_code)]' },
+        #     { line: 58, text: '#[allow(dead_code)]' }
+        # ]
 
         patch-file-line --file_path 'src/utils.rs' [
             { line: 12, text: '#[allow(dead_code)]' }
