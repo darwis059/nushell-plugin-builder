@@ -214,6 +214,18 @@ def main [repository: string plugin_ver: string do_patch: bool] {
     #         { line: 332, text: '                            Value::Binary { val: bin_val, .. } => Ok(bin_val.to_vec()),' },
     #     ]
     # }
+    
+    if $repository == 'unthingable/nu_plugin_logic' {
+        patch-file-line --file_path  'src\commands\solve.rs' [
+            { line: 24, text: '            ShellError::from(' },
+            { line: 25, text: '                LabeledError::new(msg)' },
+            { line: 26, text: '                    .with_label("structural mismatch in pattern", span),' },
+            { line: 27, text: '            ),' },
+            { line: 28, text: '' },
+            { line: 29, text: '' },
+            { line: 30, text: '' },
+        ]
+    }
 
     if $repository == 'dam4rus/nu_plugin_nuts' {
         # open Cargo.toml | upsert dependencies.windows-sys '0.61.2' | upsert dependencies.nu-utils '0.114.0' | save -f Cargo.toml
