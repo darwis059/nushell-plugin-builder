@@ -200,17 +200,17 @@ def main [repository: string plugin_ver: string do_patch: bool] {
     #     ]
     # }
 
-    if $repository == 'dam4rus/nu_plugin_nuts' {
-        # open Cargo.toml | upsert dependencies.windows-sys '0.61.2' | upsert dependencies.nu-utils '0.114.0' | save -f Cargo.toml
-        # cargo update
+    # if $repository == 'dam4rus/nu_plugin_nuts' {
+    #     # open Cargo.toml | upsert dependencies.windows-sys '0.61.2' | upsert dependencies.nu-utils '0.114.0' | save -f Cargo.toml
+    #     # cargo update
 
-        patch-file-line --file_path  'src\commands\publish.rs' [
-            { line: 29, text: '                ("headers", Type::record()),' },
-            { line: 30, text: '                ("payload", Type::String),' },
-            { line: 36, text: '                ("headers", Type::record()),' },
-            { line: 37, text: '                ("payload", Type::Binary),' }
-        ]
-    }
+    #     patch-file-line --file_path  'src\commands\publish.rs' [
+    #         { line: 29, text: '                ("headers", Type::record()),' },
+    #         { line: 30, text: '                ("payload", Type::String),' },
+    #         { line: 36, text: '                ("headers", Type::record()),' },
+    #         { line: 37, text: '                ("payload", Type::Binary),' }
+    #     ]
+    # }
 
     if $repository == 'cablehead/nu_plugin_http_serve' {
         patch-file-line --file_path 'src/serve.rs' [
@@ -356,16 +356,16 @@ def main [repository: string plugin_ver: string do_patch: bool] {
         ]
     }
 
-    if $repository == 'adevore/nu_plugin_ldap' {
-        patch-file-line --file_path  'src\commands\search\command.rs' [
-            { line: 34, text: '                   Type::List(Box::new(Type::Record(vec![' },
-            { line: 38, text: '                   ].into()))),' }
-        ]
-        patch-file-line --file_path  'src\commands\table.rs' [
-            { line: 42, text: '                   Type::List(Box::new(Type::Record(vec![' },
-            { line: 46, text: '                   ].into()))),' }
-        ]
-    }
+    # if $repository == 'adevore/nu_plugin_ldap' {
+    #     patch-file-line --file_path  'src\commands\search\command.rs' [
+    #         { line: 34, text: '                   Type::List(Box::new(Type::Record(vec![' },
+    #         { line: 38, text: '                   ].into()))),' }
+    #     ]
+    #     patch-file-line --file_path  'src\commands\table.rs' [
+    #         { line: 42, text: '                   Type::List(Box::new(Type::Record(vec![' },
+    #         { line: 46, text: '                   ].into()))),' }
+    #     ]
+    # }
     
     if $repository == 'panicbit/nu_plugin_lua' {
         patch-file-line --file_path 'src/custom/plugin_value.rs' [
