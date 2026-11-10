@@ -23,7 +23,7 @@ def main [repository: string plugin_ver: string do_patch: bool] {
     let dev_prefix = if $has_workspace_deps { "workspace.dev-dependencies" } else { "dev-dependencies" }
 
     mut patched = $cargo
-    for dep in [nu-plugin nu-protocol nuon nu-path nu-plugin-test-support nu-cmd-lang nu-cmd-base] {
+    for dep in [nu-plugin nu-protocol nuon nu-path nu-plugin-test-support nu-cmd-lang nu-cmd-base nu-utils] {
         let prefix = if $dep in [nu-plugin-test-support nu-cmd-lang] { $dev_prefix } else { $dep_prefix }
         let dep_path = ($prefix | split row '.' | append $dep | into cell-path)
         let current = ($patched | get -o $dep_path)
@@ -88,7 +88,7 @@ def main [repository: string plugin_ver: string do_patch: bool] {
     }
 
     if $repository == 'JosephTLyons/nu_plugin_units' {
-        open Cargo.toml | upsert dependencies.windows-sys '0.61.2' | upsert dependencies.nu-utils '0.110.0' | save -f Cargo.toml
+        open Cargo.toml | upsert dependencies.windows-sys '0.61.2' | save -f Cargo.toml
         cargo update
     }
 
