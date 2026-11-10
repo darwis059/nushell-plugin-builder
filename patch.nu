@@ -23,7 +23,7 @@ def main [repository: string plugin_ver: string do_patch: bool] {
     let dev_prefix = if $has_workspace_deps { "workspace.dev-dependencies" } else { "dev-dependencies" }
 
     mut patched = $cargo
-    for dep in [nu-plugin nu-protocol nuon nu-path nu-plugin-test-support nu-cmd-lang nu-cmd-base nu-utils nu_plugin_polars] {
+    for dep in [nu-plugin nu-protocol nuon nu-path nu-plugin-test-support nu-cmd-lang nu-cmd-base nu-utils nu_plugin_polars nu-color-config] {
         let prefix = if $dep in [nu-plugin-test-support nu-cmd-lang] { $dev_prefix } else { $dep_prefix }
         let dep_path = ($prefix | split row '.' | append $dep | into cell-path)
         let current = ($patched | get -o $dep_path)
