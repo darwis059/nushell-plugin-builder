@@ -83,9 +83,23 @@ def main [repository: string plugin_ver: string do_patch: bool] {
         open src/main.rs | str replace --all 'usage(&self)' 'description(&self)' | save -f src/main.rs
     }
 
-    if $repository == 'FMotalleb/nu_plugin_qr_maker' {
-        open src/to_qr.rs | str replace --all 'usage(&self)' 'description(&self)' | save -f src/to_qr.rs
-    }
+    # if $repository == 'FMotalleb/nu_plugin_qr_maker' {
+    #     let src = open --raw src/main.rs
+    #     let impl_header = 'impl nu_plugin::Plugin for QrPlugin {'
+    #     let version_impl = [
+    #         $impl_header
+    #         '    fn version(&self) -> String {'
+    #         '        env!("CARGO_PKG_VERSION").into()'
+    #         '    }'
+    #     ] | str join (char nl)
+    #     if not ($src | str contains 'fn version(&self)') {
+    #         if not ($src | str contains $impl_header) {
+    #             error make {msg: 'Cannot find the QrPlugin implementation to add version()'}
+    #         }
+    #         $src | str replace $impl_header $version_impl | save -f src/main.rs
+    #     }
+    #     open src/to_qr.rs | str replace --all 'usage(&self)' 'description(&self)' | save -f src/to_qr.rs
+    # }
 
     if $repository == 'JosephTLyons/nu_plugin_units' {
         open Cargo.toml | upsert dependencies.windows-sys '0.61.2' | save -f Cargo.toml
@@ -420,6 +434,27 @@ def main [repository: string plugin_ver: string do_patch: bool] {
     if $repository == 'dead10ck/nu_plugin_duckdb' {
         cargo update -p ethnum@1.5.2 --precise 1.5.3
         # download duckdb lib duckdb-shared-libs-windows-amd64.tar.gz from https://github.com/duckdb/duckdb/releases
+        let duckdb_dir = ($env.RUNNER_TEMP | path join 'duckdb-shared-libs')
+        let duckdb_archive = ($env.RUNNER_TEMP | path join 'duckdb-shared-libs-windows-amd64.tar.gz')
+        http get --raw https://github.com/duckdb/duckdb/releases/latest/download/duckdb-shared-libs-windows-amd64.tar.gz | save -f $duckdb_archive
+        mkdir $duckdb_dir
+        tar -xf $duckdb_archive -C $duckdb_dir
+        for file in ['duckdb.lib' 'duckdb.dll' 'duckdb.h'] {
+            if not ($duckdb_dir | path join $file | path exists) {
+                error make {msg: $'DuckDB archive is missing ($file)'}
+            }
+        }
+        $env.DUCKDB_LIB_DIR = $duckdb_dir
+        $env.DUCKDB_INCLUDE_DIR = $duckdb_dir
+        $env.LIB = ([$duckdb_dir ($env.LIB? | default '')] | str join ';')
+        [
+            $'DUCKDB_LIB_DIR=($env.DUCKDB_LIB_DIR)'
+            $'DUCKDB_INCLUDE_DIR=($env.DUCKDB_INCLUDE_DIR)'
+            $'LIB=($env.LIB)'
+            ''
+        ] | str join (char nl) | save --append $env.GITHUB_ENV
+        # Make duckdb.dll available to programs run in subsequent steps.
+        $"($duckdb_dir)\n" | save --append $env.GITHUB_PATH
     }
 }
 
