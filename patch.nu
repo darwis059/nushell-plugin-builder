@@ -138,16 +138,16 @@ def main [repository: string plugin_ver: string do_patch: bool] {
         }
     }
 
-    if $repository == 'mrxiaozhuox/nu_plugin_sled' {
-    #    open Cargo.toml | upsert dependencies.windows-sys '0.61.2' | save -f Cargo.toml
-    #    rm Cargo.lock
-    #    cargo update
-    #    cargo update -p libc
-        open src\commands\open.rs | lines | 
-            update 55 ".input_output_type(Type::Nothing, Type::record())" | str join (char nl) | save -f src/commands/open.rs
-        open src/commands/save.rs | lines | 
-            update 40 ".input_output_type(Type::record(), Type::Nothing)" | str join (char nl) | save -f src/commands/save.rs
-    }
+    # if $repository == 'mrxiaozhuox/nu_plugin_sled' {
+    # #    open Cargo.toml | upsert dependencies.windows-sys '0.61.2' | save -f Cargo.toml
+    # #    rm Cargo.lock
+    # #    cargo update
+    # #    cargo update -p libc
+    #     open src\commands\open.rs | lines | 
+    #         update 55 ".input_output_type(Type::Nothing, Type::record())" | str join (char nl) | save -f src/commands/open.rs
+    #     open src/commands/save.rs | lines | 
+    #         update 40 ".input_output_type(Type::record(), Type::Nothing)" | str join (char nl) | save -f src/commands/save.rs
+    # }
 
     if $repository == 'x_nushell-works/nu_plugin_secret' {
         open Cargo.toml | upsert dependencies.windows-sys '0.61.2' | save -f Cargo.toml
