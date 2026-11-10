@@ -92,6 +92,21 @@ def main [repository: string plugin_ver: string do_patch: bool] {
         cargo update
     }
 
+    if $repository == 'averyfreeman/nu_plugin_ipscan' {
+        let sdk_dir = ($env.RUNNER_TEMP | path join 'npcap-sdk-1.17')
+        let sdk_zip = ($env.RUNNER_TEMP | path join 'npcap-sdk-1.17.zip')
+        http get --raw https://npcap.com/dist/npcap-sdk-1.17.zip | save -f $sdk_zip
+        mkdir $sdk_dir
+        tar -xf $sdk_zip -C $sdk_dir
+        let sdk_lib = ($sdk_dir | path join 'Lib' 'x64')
+        if not ($sdk_lib | path join 'Packet.lib' | path exists) {
+            error make {msg: 'Npcap SDK is missing the x64 Packet.lib import library'}
+        }
+        $env.LIB = ([$sdk_lib ($env.LIB? | default '')] | str join ';')
+        # Export the library path to subsequent GitHub Actions steps.
+        $"LIB=($env.LIB)\n" | save --append $env.GITHUB_ENV
+    }
+
     if $repository == 'Com6235/nu-plugin-http-server' {
         patch-file-line --file_path 'src/commands/mod.rs' [
             { line: 27, text: '        Value::String { val, internal_span: _, .. } => (val.as_bytes().to_vec(), parse_pipeline_mime(meta, "text/plain")),' },
@@ -381,6 +396,10 @@ def main [repository: string plugin_ver: string do_patch: bool] {
         #     { line: 12, text: '#[allow(dead_code)]' }
         # ]
 
+    }
+
+    if $repository == 'dead10ck/nu_plugin_duckdb' {
+        cargo update -p ethnum@1.5.2 --precise 1.5.3
     }
 }
 
