@@ -22,17 +22,24 @@ def main [repository: string plugin_ver: string do_patch: bool] {
     let dep_prefix = if $has_workspace_deps { "workspace.dependencies" } else { "dependencies" }
     let dev_prefix = if $has_workspace_deps { "workspace.dev-dependencies" } else { "dev-dependencies" }
 
-    $cargo 
-        | if not ($in | get -o $"($dep_prefix).nu-plugin" | is-empty) { update $"($dep_prefix).nu-plugin" $plugin_ver } else { $in }
-        | if not ($in | get -o $"($dep_prefix).nu-protocol" | is-empty) { update $"($dep_prefix).nu-protocol" { version: $plugin_ver, features: ['plugin'] } } else { $in }
-        | if not ($in | get -o $"($dep_prefix).nuon" | is-empty) { update $"($dep_prefix).nuon" $plugin_ver } else { $in }
-        | if not ($in | get -o $"($dep_prefix).nu-path" | is-empty) { update $"($dep_prefix).nu-path" $plugin_ver } else { $in }
-        | if not ($in | get -o $"($dev_prefix).nu-plugin-test-support" | is-empty) { update $"($dev_prefix).nu-plugin-test-support" $plugin_ver } else { $in }
-        | if not ($in | get -o $"($dev_prefix).nu-cmd-lang" | is-empty) { update $"($dev_prefix).nu-cmd-lang" $plugin_ver } else { $in }
-        | if not ($in | get -o $"($dep_prefix).nu-cmd-base" | is-empty) { update $"($dep_prefix).nu-cmd-base" $plugin_ver } else { $in }
-        | save -f Cargo.toml
+    mut patched = $cargo
+    for dep in [nu-plugin nu-protocol nuon nu-path nu-plugin-test-support nu-cmd-lang nu-cmd-base] {
+        let prefix = if $dep in [nu-plugin-test-support nu-cmd-lang] { $dev_prefix } else { $dep_prefix }
+        let dep_path = ($prefix | split row '.' | append $dep | into cell-path)
+        let current = ($patched | get -o $dep_path)
+        if ($current | is-empty) { continue }
 
-    print (open Cargo.toml)
+        # Replace local path dependencies with registry versions.
+        let replacement = if $dep == 'nu-protocol' {
+            {version: $plugin_ver, features: ['plugin']}
+        } else {
+            $plugin_ver
+        }
+        $patched = ($patched | update $dep_path $replacement)
+    }
+    $patched | save -f Cargo.toml
+
+    print (open Cargo.toml | table -e)
 
     # let is_not_workspaces = open Cargo.toml | get -o workspace | is-empty 
 
