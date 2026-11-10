@@ -200,17 +200,17 @@ def main [repository: string plugin_ver: string do_patch: bool] {
     #     ]
     # }
 
-    # if $repository == 'dam4rus/nu_plugin_nuts' {
-    #     # open Cargo.toml | upsert dependencies.windows-sys '0.61.2' | upsert dependencies.nu-utils '0.114.0' | save -f Cargo.toml
-    #     # cargo update
+    if $repository == 'dam4rus/nu_plugin_nuts' {
+        # open Cargo.toml | upsert dependencies.windows-sys '0.61.2' | upsert dependencies.nu-utils '0.114.0' | save -f Cargo.toml
+        # cargo update
 
-    #     patch-file-line --file_path  'src\commands\publish.rs' [
-    #         { line: 29, text: '                ("headers", Type::record()),' },
-    #         { line: 30, text: '                ("payload", Type::String),' },
-    #         { line: 36, text: '                ("headers", Type::record()),' },
-    #         { line: 37, text: '                ("payload", Type::Binary),' }
-    #     ]
-    # }
+        patch-file-line --file_path  'src\commands\publish.rs' [
+            { line: 29, text: '                ("headers", Type::record()),' },
+            { line: 30, text: '                ("payload", Type::String),' },
+            { line: 36, text: '                ("headers", Type::record()),' },
+            { line: 37, text: '                ("payload", Type::Binary),' }
+        ]
+    }
 
     if $repository == 'cablehead/nu_plugin_http_serve' {
         patch-file-line --file_path 'src/serve.rs' [
