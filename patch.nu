@@ -65,19 +65,19 @@ def main [repository: string plugin_ver: string do_patch: bool] {
     #         save -f Cargo.toml
     # }
 
-    if $repository == 'FMotalleb/nu_plugin_qr_maker' {
-        # patch version
-        let insert = [
-            'fn version(&self) -> String {'
-            '    env!("CARGO_PKG_VERSION").into()'
-            '}'
-            'fn commands(&self)'
-        ]
-        let src = open src/main.rs
-        if ($src | find CARGO_PKG_VERSION | is-empty) {
-            $src | str replace 'fn commands(&self)' ($insert | str join (char nl)) | save -f src/main.rs
-        }
-    }
+    # if $repository == 'FMotalleb/nu_plugin_qr_maker' {
+    #     # patch version
+    #     let insert = [
+    #         'fn version(&self) -> String {'
+    #         '    env!("CARGO_PKG_VERSION").into()'
+    #         '}'
+    #         'fn commands(&self)'
+    #     ]
+    #     let src = open src/main.rs
+    #     if ($src | find CARGO_PKG_VERSION | is-empty) {
+    #         $src | str replace 'fn commands(&self)' ($insert | str join (char nl)) | save -f src/main.rs
+    #     }
+    # }
 
     if $repository in ['devyn/nu_plugin_explore_ir' 'amtoine/nu_plugin_explore'] {
         open src/main.rs | str replace --all 'usage(&self)' 'description(&self)' | save -f src/main.rs
@@ -138,16 +138,23 @@ def main [repository: string plugin_ver: string do_patch: bool] {
         }
     }
 
-    # if $repository == 'mrxiaozhuox/nu_plugin_sled' {
-    # #    open Cargo.toml | upsert dependencies.windows-sys '0.61.2' | save -f Cargo.toml
-    # #    rm Cargo.lock
-    # #    cargo update
-    # #    cargo update -p libc
-    #     open src\commands\open.rs | lines | 
-    #         update 55 ".input_output_type(Type::Nothing, Type::record())" | str join (char nl) | save -f src/commands/open.rs
-    #     open src/commands/save.rs | lines | 
-    #         update 40 ".input_output_type(Type::record(), Type::Nothing)" | str join (char nl) | save -f src/commands/save.rs
-    # }
+    if $repository == 'mrxiaozhuox/nu_plugin_sled' {
+        patch-file-line --file_path 'src/commands/open.rs' [
+            { line: 56, text: '            .input_output_type(Type::Nothing, Type::record())' },
+        ]
+
+        patch-file-line --file_path 'src/commands/save.rs' [
+            { line: 41, text: '            .input_output_type(Type::record(), Type::Nothing)' },
+        ]
+    #    open Cargo.toml | upsert dependencies.windows-sys '0.61.2' | save -f Cargo.toml
+    #    rm Cargo.lock
+    #    cargo update
+    #    cargo update -p libc
+        # open src\commands\open.rs | lines | 
+        #     update 55 ".input_output_type(Type::Nothing, Type::record())" | str join (char nl) | save -f src/commands/open.rs
+        # open src/commands/save.rs | lines | 
+        #     update 40 ".input_output_type(Type::record(), Type::Nothing)" | str join (char nl) | save -f src/commands/save.rs
+    }
 
     if $repository == 'x_nushell-works/nu_plugin_secret' {
         open Cargo.toml | upsert dependencies.windows-sys '0.61.2' | save -f Cargo.toml
@@ -412,6 +419,7 @@ def main [repository: string plugin_ver: string do_patch: bool] {
 
     if $repository == 'dead10ck/nu_plugin_duckdb' {
         cargo update -p ethnum@1.5.2 --precise 1.5.3
+        # download duckdb lib duckdb-shared-libs-windows-amd64.tar.gz from https://github.com/duckdb/duckdb/releases
     }
 }
 
