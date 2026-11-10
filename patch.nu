@@ -455,6 +455,45 @@ def main [repository: string plugin_ver: string do_patch: bool] {
         ] | str join (char nl) | save --append $env.GITHUB_ENV
         # Make duckdb.dll available to programs run in subsequent steps.
         $"($duckdb_dir)\n" | save --append $env.GITHUB_PATH
+        patch-file-line --file_path  'src\main.rs' [
+            { line: 5, text: 'serve_plugin(&DuckDB::new().expect("Failed to initialize DuckDB plugin"), MsgPackSerializer)' }
+        ]
+        patch-file-line --file_path 'src/duckdb/mod.rs' [
+            {
+                line: 1
+                text: ([
+                    'use nu_plugin::{Plugin, PluginCommand};'
+                    'use nu_plugin_polars::PolarsPlugin;'
+                    'use nu_protocol::ShellError;'
+                ] | str join (char nl))
+            }
+            { line: 6, text: '' }
+            { line: 12, text: 'impl DuckDB {' }
+            {
+                line: 18
+                text: ([
+                    '}'
+                    ''
+                    'impl Plugin for DuckDB {'
+                ] | str join (char nl))
+            }
+        ]
+        patch-file-line --file_path 'src/duckdb/commands/into.rs' [
+            { line: 4, text: 'use nu_protocol::{LabeledError, PipelineData, Signature, Span, SyntaxShape};' }
+            { line: 24, text: '        let _ctrlc = engine.signals();' }
+            { line: 28, text: '        let db_path_span = db_path.as_ref()' }
+            { line: 29, text: '            .map(|path| path.span())' }
+            {
+                line: 32
+                text: ([
+                    '        let input_span = input.span().unwrap_or(Span::unknown());'
+                    '        let _df = NuDataFrame::try_from_pipeline('
+                ] | str join (char nl))
+            }
+            { line: 35, text: '            input_span,' }
+            { line: 38, text: '        let _db = match db_path {' }
+            { line: 79, text: "    fn examples(&self) -> Vec<nu_protocol::Example<'_>> {" }
+        ]
     }
 }
 
